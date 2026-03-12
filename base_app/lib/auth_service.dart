@@ -2,11 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../home.dart';
-import '../login.dart';
+import '../pages/home.dart';
+import '../pages/login.dart';
 
 // credits to @MahdiNazmi for source code
-// github link:
+// github link: 
 class AuthService {
 
   Future<void> signup({
@@ -14,17 +14,22 @@ class AuthService {
     required String password,
     required BuildContext context
   }) async {
+    
     try {
+    
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password
       );
+
       await Future.delayed(const Duration(seconds: 1));
-      Navigator.pushAndRemoveUntil(
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => const Home()),
-        (route) => false, // clears entire stack
+        MaterialPageRoute(
+          builder: (BuildContext context) => const Home()
+        )
       );
+      
     } on FirebaseAuthException catch(e) {
       String message = '';
       if (e.code == 'weak-password') {
@@ -32,7 +37,7 @@ class AuthService {
       } else if (e.code == 'email-already-in-use') {
         message = 'An account already exists with that email.';
       }
-      Fluttertoast.showToast(
+       Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
@@ -40,7 +45,9 @@ class AuthService {
         textColor: Colors.white,
         fontSize: 14.0,
       );
-    } catch(e) {}
+    }
+    catch(e){
+    }
   }
 
   Future<void> signin({
@@ -48,17 +55,22 @@ class AuthService {
     required String password,
     required BuildContext context
   }) async {
+    
     try {
+
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password
       );
+
       await Future.delayed(const Duration(seconds: 1));
-      Navigator.pushAndRemoveUntil(
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => const Home()),
-        (route) => false, // clears entire stack
+        MaterialPageRoute(
+          builder: (BuildContext context) => const Home()
+        )
       );
+      
     } on FirebaseAuthException catch(e) {
       String message = '';
       if (e.code == 'invalid-email') {
@@ -66,7 +78,7 @@ class AuthService {
       } else if (e.code == 'invalid-credential') {
         message = 'Wrong password provided for that user.';
       }
-      Fluttertoast.showToast(
+       Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
@@ -74,18 +86,22 @@ class AuthService {
         textColor: Colors.white,
         fontSize: 14.0,
       );
-    } catch(e) {}
+    }
+    catch(e){
+    }
   }
 
   Future<void> signout({
     required BuildContext context
   }) async {
+    
     await FirebaseAuth.instance.signOut();
     await Future.delayed(const Duration(seconds: 1));
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => Login()),
-      (route) => false, // clears entire stack
-    );
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>Login()
+        )
+      );
   }
 }
