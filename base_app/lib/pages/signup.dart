@@ -1,4 +1,4 @@
-import 'package:base_app/login.dart';
+import 'package:base_app/pages/login.dart';
 import 'package:base_app/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +74,7 @@ class Signup extends StatelessWidget {
           controller: _emailController,
           decoration: InputDecoration(
             filled: true,
-            hintText: 'test@.com',
+            hintText: 'test@ email.com',
             hintStyle: const TextStyle(
               color: Color(0xff6A6A6A),
               fontWeight: FontWeight.normal,
