@@ -1,14 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-<<<<<<< HEAD
 import 'pages/home.dart';
 import 'pages/login.dart';
-=======
-import '../pages/home.dart';
-import '../pages/login.dart';
->>>>>>> 3976b927516a4be43b22a5a944c6365600e11598
+
 
 // credits to @MahdiNazmi for source code
 // github link: 

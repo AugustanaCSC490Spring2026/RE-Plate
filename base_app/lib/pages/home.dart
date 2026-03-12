@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          'RE-Plate',
+          'Lets get cooking!',
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
               color: Colors.green,
@@ -30,6 +30,8 @@ class Home extends StatelessWidget {
         ),
         iconTheme: const IconThemeData(color: Colors.green),
       ),
+      // I used CLaude AI assistance to learn about scafolding and putting things into 
+      // the sidebar
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: ListView(
