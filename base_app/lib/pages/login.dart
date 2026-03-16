@@ -110,37 +110,43 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _password() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Password',
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-              fontSize: 16
-            )
-          ),
+Widget _password() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Password',
+        style: GoogleFonts.raleway(
+          textStyle: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 16
+          )
         ),
-        const SizedBox(height: 16,),
-        TextField(
-          obscureText: true,
-          controller: _passwordController,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color(0xffF7F7F9) ,
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(14)
-            )
+      ),
+      const SizedBox(height: 16,),
+      TextField(
+        obscureText: true,
+        controller: _passwordController,
+        decoration: InputDecoration(
+          filled: true,
+          hintText: 'Enter your password',
+          hintStyle: const TextStyle(
+            color: Color(0xff6A6A6A),
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
           ),
-        )
-      ],
-    );
-  }
+          fillColor: const Color(0xffF7F7F9),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(14)
+          )
+        ),
+      )
+    ],
+  );
+}
 
   Widget _signin(BuildContext context) {
     return ElevatedButton(

@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // credits to @MahdiNazmi for source code
-// github link: 
+// github link:
 
 class Signup extends StatelessWidget {
   Signup({super.key});
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -25,7 +26,7 @@ class Signup extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-         padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             children: [
               Center(
@@ -35,22 +36,60 @@ class Signup extends StatelessWidget {
                     textStyle: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: 32
-                    )
+                      fontSize: 32,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 80,),
-               _emailAddress(),
-               const SizedBox(height: 20,),
-               _password(),
-               const SizedBox(height: 50,),
-               _signup(context),
+              const SizedBox(height: 40),
+              _username(),
+              const SizedBox(height: 20),
+              _emailAddress(),
+              const SizedBox(height: 20),
+              _password(),
+              const SizedBox(height: 50),
+              _signup(context),
             ],
           ),
-
+        ),
       ),
-      )
+    );
+  }
+
+  Widget _username() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Username',
+          style: GoogleFonts.raleway(
+            textStyle: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.normal,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _usernameController,
+          decoration: InputDecoration(
+            filled: true,
+            hintText: 'Enter your username',
+            hintStyle: const TextStyle(
+              color: Color(0xff6A6A6A),
+              fontWeight: FontWeight.normal,
+              fontSize: 14,
+            ),
+            fillColor: const Color(0xffF7F7F9),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -65,79 +104,85 @@ class Signup extends StatelessWidget {
             textStyle: const TextStyle(
               color: Colors.green,
               fontWeight: FontWeight.normal,
-              fontSize: 16
-            )
+              fontSize: 16,
+            ),
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(height: 16),
         TextField(
           controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             filled: true,
-            hintText: 'test@ email.com',
+            hintText: 'test@email.com',
             hintStyle: const TextStyle(
               color: Color(0xff6A6A6A),
               fontWeight: FontWeight.normal,
-              fontSize: 14
+              fontSize: 14,
             ),
-            fillColor: const Color(0xffF7F7F9) ,
+            fillColor: const Color(0xffF7F7F9),
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(14)
-            )
+              borderRadius: BorderRadius.circular(14),
+            ),
           ),
         )
       ],
     );
   }
-
-  Widget _password() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Password',
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-              fontSize: 16
-            )
-          ),
+Widget _password() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Password',
+        style: GoogleFonts.raleway(
+          textStyle: const TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.normal,
+            fontSize: 16
+          )
         ),
-        const SizedBox(height: 16,),
-        TextField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color(0xffF7F7F9) ,
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(14)
-            )
+      ),
+      const SizedBox(height: 16,),
+      TextField(
+        obscureText: true,
+        controller: _passwordController,
+        decoration: InputDecoration(
+          filled: true,
+          hintText: 'Enter a secure password',
+          hintStyle: const TextStyle(
+            color: Color(0xff6A6A6A),
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
           ),
-        )
-      ],
-    );
-  }
-
+          fillColor: const Color(0xffF7F7F9),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(14)
+          )
+        ),
+      )
+    ],
+  );
+}
   Widget _signup(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 13, 253, 153),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          minimumSize: const Size(double.infinity, 60),
-          elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        minimumSize: const Size(double.infinity, 60),
+        elevation: 0,
       ),
       onPressed: () async {
-       await AuthService().signup(
+        await AuthService().signup(
+          username: _usernameController.text,
           email: _emailController.text,
           password: _passwordController.text,
-          context: context
+          context: context,
         );
       },
       child: const Text("Sign Up"),
@@ -152,31 +197,32 @@ class Signup extends StatelessWidget {
         text: TextSpan(
           children: [
             const TextSpan(
-                text: "Already Have Account? ",
-                style: TextStyle(
-                  color: Color(0xff6A6A6A),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16
-                ),
+              text: "Already Have Account? ",
+              style: TextStyle(
+                color: Color(0xff6A6A6A),
+                fontWeight: FontWeight.normal,
+                fontSize: 16,
               ),
-              TextSpan(
-                text: "Log In",
-                style: const TextStyle(
-                    color: Color(0xff1A1D1E),
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16
-                  ),
-                  recognizer: TapGestureRecognizer()..onTap = () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Login()
-                      ),
-                    );
-                  }
+            ),
+            TextSpan(
+              text: "Log In",
+              style: const TextStyle(
+                color: Color(0xff1A1D1E),
+                fontWeight: FontWeight.normal,
+                fontSize: 16,
               ),
-          ]
-        )
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Login(),
+                    ),
+                  );
+                },
+            ),
+          ],
+        ),
       ),
     );
   }
