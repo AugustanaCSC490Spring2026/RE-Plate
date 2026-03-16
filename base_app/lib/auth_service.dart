@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'pages/home.dart';
+import 'pages/login.dart';
 
-import '../home.dart';
-import '../login.dart';
 
 // credits to @MahdiNazmi for source code
 // github link: 
@@ -16,7 +16,7 @@ class AuthService {
   }) async {
     
     try {
-
+    
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password

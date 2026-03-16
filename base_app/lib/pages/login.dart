@@ -1,4 +1,4 @@
-import 'package:base_app/login.dart';
+import 'package:base_app/pages/signup.dart';
 import 'package:base_app/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 // credits to @MahdiNazmi for source code
 // github link: 
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Login extends StatelessWidget {
+  Login({super.key});
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -17,23 +18,42 @@ class Signup extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      bottomNavigationBar: _signin(context),
+      bottomNavigationBar: _signup(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 50,
+        toolbarHeight: 100,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(left: 10),
+            decoration: const BoxDecoration(
+              color: Color(0xffF7F7F9),
+              shape: BoxShape.circle
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Center(
                 child: Text(
-                  'Register Account',
+                  'Welcome back!',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Colors.black,
+                      color: Colors.green,
                       fontWeight: FontWeight.bold,
                       fontSize: 32
                     )
@@ -45,15 +65,14 @@ class Signup extends StatelessWidget {
                const SizedBox(height: 20,),
                _password(),
                const SizedBox(height: 50,),
-               _signup(context),
+               _signin(context),
             ],
           ),
-
+        ),
       ),
-      )
     );
   }
-
+  
   Widget _emailAddress() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -63,7 +82,7 @@ class Signup extends StatelessWidget {
           'Email Address',
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Colors.green,
+              color: Colors.black,
               fontWeight: FontWeight.normal,
               fontSize: 16
             )
@@ -74,7 +93,7 @@ class Signup extends StatelessWidget {
           controller: _emailController,
           decoration: InputDecoration(
             filled: true,
-            hintText: 'test@.com',
+            hintText: 'test@email.com',
             hintStyle: const TextStyle(
               color: Color(0xff6A6A6A),
               fontWeight: FontWeight.normal,
@@ -108,8 +127,8 @@ class Signup extends StatelessWidget {
         ),
         const SizedBox(height: 16,),
         TextField(
-          controller: _passwordController,
           obscureText: true,
+          controller: _passwordController,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xffF7F7F9) ,
@@ -123,28 +142,28 @@ class Signup extends StatelessWidget {
     );
   }
 
-  Widget _signup(BuildContext context) {
+  Widget _signin(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 13, 253, 153),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          minimumSize: const Size(double.infinity, 60),
-          elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 13, 253, 173),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        minimumSize: const Size(double.infinity, 60),
+        elevation: 0,
       ),
       onPressed: () async {
-       await AuthService().signup(
+        await AuthService().signin(
           email: _emailController.text,
           password: _passwordController.text,
           context: context
         );
       },
-      child: const Text("Sign Up"),
+      child: const Text("Sign In"),
     );
   }
 
-  Widget _signin(BuildContext context) {
+  Widget _signup(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: RichText(
@@ -152,7 +171,7 @@ class Signup extends StatelessWidget {
         text: TextSpan(
           children: [
             const TextSpan(
-                text: "Already Have Account? ",
+                text: "New User? ",
                 style: TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
@@ -160,7 +179,7 @@ class Signup extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: "Log In",
+                text: "Create Account",
                 style: const TextStyle(
                     color: Color(0xff1A1D1E),
                     fontWeight: FontWeight.normal,
@@ -170,7 +189,7 @@ class Signup extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Login()
+                        builder: (context) => Signup()
                       ),
                     );
                   }

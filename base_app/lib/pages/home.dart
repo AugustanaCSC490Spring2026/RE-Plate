@@ -1,7 +1,11 @@
 import 'package:base_app/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+// credits to @MahdiNazmi for source code
+// github link:
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,7 +19,13 @@ class _HomeState extends State<Home> {
   
   /// state variables:
   List<String> _pantryList = []; 
+
+
+
   // Store the actual map  data instead of just a string to access ingredients/steps later
+
+
+
   List<Map<String, dynamic>> _foundRecipes = [];
   bool _isSearching = false;
 
@@ -59,7 +69,7 @@ class _HomeState extends State<Home> {
   void _showRecipeDetails(Map<String, dynamic> recipe) {
    
    
-    // Determine the steps list by checking common field name variations
+    /// find the recipe directions, checking for both "directions" and "preparation_steps" fields to accommodate different recipe formats
     List directionsList = [];
     if (recipe['directions'] != null) {
       directionsList = recipe['directions'];
@@ -73,7 +83,6 @@ class _HomeState extends State<Home> {
     }
 
     /// Show the bottom sheet with recipe details, including title, ingredients, and preparation steps
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -205,8 +214,115 @@ class _HomeState extends State<Home> {
 /// The main build method that constructs the UI of the home screen, including the search input, ingredient chips, search button, and results list
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'Lets get cooking!',
+          style: GoogleFonts.raleway(
+            textStyle: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.green),
+      ),
+      // I used CLaude AI assistance to learn about scafolding and putting things into 
+      // the sidebar
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.green, Colors.lightGreen],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              accountName: Text(
+                'RE-Plate User',
+                style: GoogleFonts.raleway(
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              accountEmail: Text(
+                user?.email ?? '',
+                style: GoogleFonts.raleway(
+                  textStyle: const TextStyle(fontSize: 13),
+                ),
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Text(
+                  user?.email?.substring(0, 1).toUpperCase() ?? 'U',
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home_outlined, color: Colors.green),
+              title: Text('Home',
+                  style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600))),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.favorite_outline_rounded,
+                  color: Colors.green),
+              title: Text('My Plates',
+                  style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600))),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.category_rounded,
+                  color: Colors.green),
+              title: Text('Categories',
+                  style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600))),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.history_outlined, color: Colors.green),
+              title: Text('History',
+                  style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600))),
+              onTap: () => Navigator.pop(context),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.redAccent),
+              title: Text('Sign Out',
+                  style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.w600))),
+              onTap: () async {
+                Navigator.pop(context);
+                await AuthService().signout(context: context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -317,7 +433,7 @@ class _HomeState extends State<Home> {
               Center(
                 child: TextButton(
                   onPressed: () => AuthService().signout(context: context),
-                  child: const Text("Sign Out", style: TextStyle(color: FontWeight.normal != null ? Colors.red : Colors.red)),
+                  child: const Text("Sign Out", style: TextStyle(color: Colors.red)),
                 ),
               )
             ],
