@@ -42,6 +42,8 @@ class AuthService {
             email: trimmedEmail,
             password: password,
           );
+          //added this line to display username in sidebar
+      await userCredential.user!.updateDisplayName(trimmedUsername);
 
       String uid = userCredential.user!.uid;
 

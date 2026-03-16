@@ -249,7 +249,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               accountName: Text(
-                'RE-Plate User',
+                user?.displayName ?? '',
                 style: GoogleFonts.raleway(
                   textStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Text(
-                  user?.email?.substring(0, 1).toUpperCase() ?? 'U',
+                  user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
                       color: Colors.green,
