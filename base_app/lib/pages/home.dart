@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
+import 'package:base_app/pages/history.dart';
 
 // credits to @MahdiNazmi for source code
 // github link:
@@ -281,6 +282,28 @@ class _HomeState extends State<Home> {
 
     setState(() {});
   }
+  //keeps track of user history
+  Future<void> _logHistory(Map<String, dynamic> recipe) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final recipeId = recipe['id'];
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('history')
+      .doc(recipeId)
+      .set({
+    'recipe_title': recipe['recipe_title'] ?? 'Unnamed Recipe',
+    'ingredients': recipe['ingredients'] ?? [],
+    'directions': recipe['directions'] ?? [],
+    'preparation_steps': recipe['preparation_steps'] ?? [],
+    'id': recipeId,
+    'viewed_at': FieldValue.serverTimestamp(),
+  });
+}
+
+
 
   /// The main build method that constructs the UI of the home screen, including the search input, ingredient chips, search button, and results list
   @override
@@ -397,7 +420,13 @@ class _HomeState extends State<Home> {
                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+               Navigator.pop(context);
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HistoryPage()),
+              );
+            },
             ),
             const Divider(),
             ListTile(
@@ -539,7 +568,10 @@ class _HomeState extends State<Home> {
                               final isFavorited = snapshot.data ?? false;
 
                               return ListTile(
-                                onTap: () => _showRecipeDetails(recipe),
+                                onTap: (){
+                                _logHistory(recipe);
+                                _showRecipeDetails(recipe);
+                                },
                                 leading: const Icon(
                                   Icons.restaurant_menu,
                                   color: Colors.green,
