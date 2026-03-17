@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/history.dart';
+import 'package:base_app/pages/categories.dart';
 
 // credits to @MahdiNazmi for source code
 // github link:
@@ -316,7 +317,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          'Lets get cooking!',
+          'Lets RE-Plate!',
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
               color: Colors.green,
@@ -402,16 +403,7 @@ class _HomeState extends State<Home> {
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.category_rounded, color: Colors.green),
-              title: Text(
-                'Categories',
-                style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              onTap: () => Navigator.pop(context),
-            ),
+            
             ListTile(
               leading: const Icon(Icons.history_outlined, color: Colors.green),
               title: Text(
@@ -428,6 +420,32 @@ class _HomeState extends State<Home> {
               );
             },
             ),
+              ListTile(
+                leading: const Icon(Icons.category_rounded, color: Colors.green),
+                title: Text(
+                    'Categories',
+                     style: GoogleFonts.raleway(
+                           textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                   ),
+            ),
+             onTap: () {
+    
+             Navigator.pop(context); 
+    
+    
+              Navigator.push(
+               context,
+               MaterialPageRoute(
+              builder: (context) => const CategoriesPage(),
+      ),
+    );
+  },
+),
+
+ 
+ 
+ 
+ 
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
