@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/history.dart';
-import 'package:base_app/pages/categories.dart';
+
 
 // credits to @MahdiNazmi for source code
 // github link:
@@ -420,27 +420,6 @@ class _HomeState extends State<Home> {
               );
             },
             ),
-              ListTile(
-                leading: const Icon(Icons.category_rounded, color: Colors.green),
-                title: Text(
-                    'Categories',
-                     style: GoogleFonts.raleway(
-                           textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                   ),
-            ),
-             onTap: () {
-    
-             Navigator.pop(context); 
-    
-    
-              Navigator.push(
-               context,
-               MaterialPageRoute(
-              builder: (context) => const CategoriesPage(),
-      ),
-    );
-  },
-),
 
  
  
