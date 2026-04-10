@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:base_app/pages/favorites.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -162,6 +163,49 @@ class _HistoryPageState extends State<HistoryPage> {
     }
   }
 
+  Future<bool> _isFavorited(String recipeId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return false;
+
+  final doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('favorites')
+      .doc(recipeId)
+      .get();
+
+  return doc.exists;
+}
+
+Future<void> _toggleFavorite(Map<String, dynamic> recipe) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final recipeId = recipe['id'];
+  final favoriteRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('favorites')
+      .doc(recipeId);
+
+  final doc = await favoriteRef.get();
+
+  if (doc.exists) {
+    await favoriteRef.delete();
+  } else {
+    await favoriteRef.set({
+      'recipe_title': recipe['recipe_title'] ?? 'Unnamed Recipe',
+      'ingredients': recipe['ingredients'] ?? [],
+      'directions': recipe['directions'] ?? [],
+      'preparation_steps': recipe['preparation_steps'] ?? [],
+      'id': recipeId,
+      'saved_at': FieldValue.serverTimestamp(),
+    });
+  }
+
+  setState(() {});
+}
+
   /// Formats a Firestore Timestamp into a readable string
   String _formatTimestamp(Timestamp? timestamp) {
     if (timestamp == null) return '';
@@ -242,30 +286,45 @@ class _HistoryPageState extends State<HistoryPage> {
               final recipe = historyDocs[index].data() as Map<String, dynamic>;
               final timestamp = recipe['viewed_at'] as Timestamp?;
 
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.history, color: Colors.green),
-                title: Text(
-                  recipe['recipe_title'] ?? 'Unnamed Recipe',
-                  style: GoogleFonts.raleway(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                subtitle: Text(
-                  _formatTimestamp(timestamp),
-                  style: GoogleFonts.raleway(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.grey,
-                ),
-                onTap: () => _showRecipeDetails(recipe),
-              );
+              return FutureBuilder<bool>(
+  future: _isFavorited(recipe['id'] ?? ''),
+  builder: (context, snapshot) {
+    final isFavorited = snapshot.data ?? false;
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.history, color: Colors.green),
+      title: Text(
+        recipe['recipe_title'] ?? 'Unnamed Recipe',
+        style: GoogleFonts.raleway(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        _formatTimestamp(timestamp),
+        style: GoogleFonts.raleway(
+          fontSize: 12,
+          color: Colors.grey,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(
+              isFavorited ? Icons.favorite : Icons.favorite_border,
+              color: isFavorited ? Colors.red : Colors.grey,
+            ),
+            onPressed: () => _toggleFavorite(recipe),
+          ),
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        ],
+      ),
+      onTap: () => _showRecipeDetails(recipe),
+    );
+  },
+);
             },
           );
         },
