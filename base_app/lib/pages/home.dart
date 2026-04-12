@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/history.dart';
 
-
 // credits to @MahdiNazmi for source code
 // github link:
 
@@ -46,6 +45,17 @@ class _HomeState extends State<Home> {
           _controller.clear();
         });
       }
+    }
+  }
+
+  String _getGreeting(String name) {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning, $name!';
+    } else if (hour < 17) {
+      return 'Good afternoon, $name!';
+    } else {
+      return 'Good evening, $name!';
     }
   }
 
@@ -283,28 +293,27 @@ class _HomeState extends State<Home> {
 
     setState(() {});
   }
+
   //keeps track of user history
   Future<void> _logHistory(Map<String, dynamic> recipe) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-  final recipeId = recipe['id'];
-  await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .collection('history')
-      .doc(recipeId)
-      .set({
-    'recipe_title': recipe['recipe_title'] ?? 'Unnamed Recipe',
-    'ingredients': recipe['ingredients'] ?? [],
-    'directions': recipe['directions'] ?? [],
-    'preparation_steps': recipe['preparation_steps'] ?? [],
-    'id': recipeId,
-    'viewed_at': FieldValue.serverTimestamp(),
-  });
-}
-
-
+    final recipeId = recipe['id'];
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('history')
+        .doc(recipeId)
+        .set({
+          'recipe_title': recipe['recipe_title'] ?? 'Unnamed Recipe',
+          'ingredients': recipe['ingredients'] ?? [],
+          'directions': recipe['directions'] ?? [],
+          'preparation_steps': recipe['preparation_steps'] ?? [],
+          'id': recipeId,
+          'viewed_at': FieldValue.serverTimestamp(),
+        });
+  }
 
   /// The main build method that constructs the UI of the home screen, including the search input, ingredient chips, search button, and results list
   @override
@@ -403,7 +412,7 @@ class _HomeState extends State<Home> {
                 );
               },
             ),
-            
+
             ListTile(
               leading: const Icon(Icons.history_outlined, color: Colors.green),
               title: Text(
@@ -413,19 +422,14 @@ class _HomeState extends State<Home> {
                 ),
               ),
               onTap: () {
-               Navigator.pop(context);
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HistoryPage()),
-              );
-            },
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage()),
+                );
+              },
             ),
 
-
- 
- 
- 
- 
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
@@ -453,6 +457,15 @@ class _HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                _getGreeting(user?.displayName ?? 'Chef'),
+                style: GoogleFonts.raleway(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
                 'Pantry Search',
                 style: GoogleFonts.raleway(
                   fontSize: 28,
@@ -460,6 +473,7 @@ class _HomeState extends State<Home> {
                   color: Colors.green,
                 ),
               ),
+              const SizedBox(height: 5),
               const SizedBox(height: 5),
               Text(
                 'Find recipes that use all these ingredients:',
@@ -566,9 +580,9 @@ class _HomeState extends State<Home> {
                               final isFavorited = snapshot.data ?? false;
 
                               return ListTile(
-                                onTap: (){
-                                _logHistory(recipe);
-                                _showRecipeDetails(recipe);
+                                onTap: () {
+                                  _logHistory(recipe);
+                                  _showRecipeDetails(recipe);
                                 },
                                 leading: const Icon(
                                   Icons.restaurant_menu,
