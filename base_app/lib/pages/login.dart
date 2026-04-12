@@ -79,7 +79,7 @@ class Login extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Address',
+          'Username or Email',
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
               color: Colors.black,
@@ -93,7 +93,7 @@ class Login extends StatelessWidget {
           controller: _emailController,
           decoration: InputDecoration(
             filled: true,
-            hintText: 'test@email.com',
+            hintText: 'Enter your username or email',
             hintStyle: const TextStyle(
               color: Color(0xff6A6A6A),
               fontWeight: FontWeight.normal,
@@ -160,7 +160,7 @@ Widget _password() {
       ),
       onPressed: () async {
         await AuthService().signin(
-          email: _emailController.text,
+          emailOrUsername: _emailController.text,
           password: _passwordController.text,
           context: context
         );

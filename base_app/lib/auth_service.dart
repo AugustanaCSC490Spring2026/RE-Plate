@@ -89,40 +89,77 @@ class AuthService {
     }
   }
 
-  Future<void> signin({
-    required String email,
-    required String password,
-    required BuildContext context,
-  }) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
+Future<void> signin({
+  required String emailOrUsername,
+  required String password,
+  required BuildContext context,
+}) async {
+  try {
+    String loginEmail = emailOrUsername.trim();
 
-      await Future.delayed(const Duration(seconds: 1));
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => const Home()),
-      );
-    } on FirebaseAuthException catch (e) {
-      String message = '';
-      if (e.code == 'invalid-email') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'invalid-credential') {
-        message = 'Wrong password provided for that user.';
+    // If input doesn't contain '@', treat it as a username
+    if (!loginEmail.contains('@')) {
+      final query = await FirebaseFirestore.instance
+          .collection('users')
+          .where('username', isEqualTo: loginEmail.toLowerCase())
+          .limit(1)
+          .get();
+
+      if (query.docs.isEmpty) {
+        Fluttertoast.showToast(
+          msg: 'No user found with that username.',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.SNACKBAR,
+          backgroundColor: Colors.black54,
+          textColor: Colors.white,
+          fontSize: 14.0,
+        );
+        return;
       }
 
-      Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-    } catch (e) {}
+      // Grab the email linked to that username
+      loginEmail = query.docs.first.data()['email'] as String;
+    }
+
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: loginEmail,
+      password: password,
+    );
+
+    await Future.delayed(const Duration(seconds: 1));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => const Home()),
+    );
+  } on FirebaseAuthException catch (e) {
+    String message = '';
+    if (e.code == 'invalid-email') {
+      message = 'No user found for that email.';
+    } else if (e.code == 'invalid-credential') {
+      message = 'Wrong password provided for that user.';
+    } else {
+      message = 'Sign in failed. Please try again.';
+    }
+
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.SNACKBAR,
+      backgroundColor: Colors.black54,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
+  } catch (e) {
+    Fluttertoast.showToast(
+      msg: 'Something went wrong. Please try again.',
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.SNACKBAR,
+      backgroundColor: Colors.black54,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
   }
+}
 
   Future<void> signout({required BuildContext context}) async {
     await FirebaseAuth.instance.signOut();
