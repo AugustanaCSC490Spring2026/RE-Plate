@@ -63,7 +63,7 @@ class Login extends StatelessWidget {
               const SizedBox(height: 80,),
                _emailAddress(),
                const SizedBox(height: 20,),
-               _password(),
+               _password(context),
                const SizedBox(height: 50,),
                _signin(context),
             ],
@@ -110,7 +110,7 @@ class Login extends StatelessWidget {
     );
   }
 
-Widget _password() {
+Widget _password(BuildContext context) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,6 +129,13 @@ Widget _password() {
       TextField(
         obscureText: true,
         controller: _passwordController,
+          onSubmitted: (_) async {       
+            await AuthService().signin(
+              emailOrUsername: _emailController.text,
+              password: _passwordController.text,
+              context: context,
+            );
+          },
         decoration: InputDecoration(
           filled: true,
           hintText: 'Enter your password',
