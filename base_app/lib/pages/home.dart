@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/history.dart';
+import 'package:base_app/pages/chat_box.dart';
 
 // credits to @MahdiNazmi for source code
 // github link:
@@ -628,6 +629,19 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+        floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (_) => const ChatBox(),
+        ),
+      ),
     );
   }
-}
+}/*  */
