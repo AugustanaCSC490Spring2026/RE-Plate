@@ -22,6 +22,22 @@ class _ChatBoxState extends State<ChatBox> {
   final List<_Message> _messages = [];
   bool _isLoading = false;
 
+  static const List<String> _suggestions = [
+    'What is a substitute for milk? 🥛',
+    'Is lamb meat halal? 🥩',
+    'What are high-protein breakfast ideas? 🍳',
+    'Is olive oil healthier than butter? 🫒',
+    'How do I make a recipe gluten-free? 🌾',
+    'What foods are high in iron?',
+  ];
+
+  Future<void> _sendSuggestion(String suggestion) async {
+    // Strip the emoji before sending to the AI
+    final clean = suggestion.replaceAll(RegExp(r'\s?\p{So}+$', unicode: true), '').trim();
+    _controller.text = clean;
+    await _sendMessage();
+  }
+
   Future<void> _sendMessage() async {
     final text = _controller.text.trim();
     if (text.isEmpty || _isLoading) return;
@@ -80,7 +96,7 @@ class _ChatBoxState extends State<ChatBox> {
         children: [
           const SizedBox(height: 12),
           Text(
-            'Recipe Assistant',
+            'FoodieAI',
             style: GoogleFonts.raleway(
                 fontSize: 16, fontWeight: FontWeight.w600),
           ),
@@ -101,6 +117,47 @@ class _ChatBoxState extends State<ChatBox> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.raleway(
                               color: Colors.grey, fontSize: 14),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Try asking:',
+                          style: GoogleFonts.raleway(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: _suggestions.map((s) {
+                            return GestureDetector(
+                              onTap: () => _sendSuggestion(s),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 9),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary
+                                      .withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: theme.colorScheme.primary
+                                        .withOpacity(0.25),
+                                  ),
+                                ),
+                                child: Text(
+                                  s,
+                                  style: GoogleFonts.raleway(
+                                    fontSize: 12.5,
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ],
                     ),
