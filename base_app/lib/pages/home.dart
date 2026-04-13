@@ -76,179 +76,257 @@ class _HomeState extends State<Home> {
   }
 
   /// A function to show recipe details in a bottom sheet
-  void _showRecipeDetails(Map<String, dynamic> recipe) {
-    /// find the recipe directions, checking for both "directions" and "preparation_steps" fields to accommodate different recipe formats
-    List directionsList = [];
-    if (recipe['directions'] != null) {
-      directionsList = recipe['directions'];
-    } else if (recipe['preparation_steps'] != null) {
-      directionsList = recipe['preparation_steps'];
-    }
+  void _showRecipeDetails(Map<String, dynamic> recipe) async {
+  showDialog(
+    context: context,
+    builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.green)),
+  );
 
-    List ingredientsList = [];
-    if (recipe['ingredients'] != null) {
-      ingredientsList = recipe['ingredients'];
-    }
+  try {
+    var snapshot = await FirebaseFirestore.instance
+        .collection('RecipeNLG')
+        .where('title', isEqualTo: recipe['title'])
+        .limit(1)
+        .get();
 
-    /// Show the bottom sheet with recipe details, including title, ingredients, and preparation steps
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.85,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
+    Navigator.pop(context); // Remove loader
+
+    if (snapshot.docs.isNotEmpty) {
+      var fullData = snapshot.docs.first.data();
+
+      _logHistory({
+        ...fullData,
+        'id': recipe['title'],
+        'recipe_title': fullData['title'],
+      });
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          maxChildSize: 0.95,
+          minChildSize: 0.5,
+          builder: (context, scrollController) => Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            padding: const EdgeInsets.all(24),
+            child: ListView(
+              controller: scrollController,
+              children: [
+                // Drag handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                recipe['recipe_title'] ?? "Unnamed Recipe",
-                style: GoogleFonts.raleway(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Ingredients",
-                style: GoogleFonts.raleway(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Divider(),
-              for (var ing in ingredientsList)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    "• $ing",
-                    style: GoogleFonts.raleway(fontSize: 16),
-                  ),
-                ),
-              const SizedBox(height: 25),
-              Text(
-                "Preparation Steps",
-                style: GoogleFonts.raleway(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Divider(),
 
-              if (directionsList.isEmpty)
+                // Title
                 Text(
-                  "No steps provided.",
-                  style: GoogleFonts.raleway(color: Colors.grey),
-                )
-              else
-                for (int i = 0; i < directionsList.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  fullData['title'] ?? 'Recipe',
+                  style: GoogleFonts.raleway(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Ingredients section
+                Text(
+                  'Ingredients',
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...(fullData['ingredients'] as List<dynamic>? ?? []).map(
+                  (ingredient) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${i + 1}. ",
-                          style: GoogleFonts.raleway(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
+                        const Icon(Icons.fiber_manual_record, size: 8, color: Colors.green),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            directionsList[i].toString(),
-                            style: GoogleFonts.raleway(
-                              fontSize: 16,
-                              height: 1.4,
-                            ),
+                            ingredient.toString(),
+                            style: GoogleFonts.raleway(fontSize: 14),
                           ),
                         ),
                       ],
                     ),
                   ),
-              const SizedBox(height: 40),
-            ],
+                ),
+                const SizedBox(height: 20),
+
+                // Directions section
+                Text(
+                  'Directions',
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...(fullData['directions'] as List<dynamic>? ?? []).asMap().entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: Colors.green,
+                          child: Text(
+                            '${entry.key + 1}',
+                            style: const TextStyle(color: Colors.white, fontSize: 11),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            entry.value.toString(),
+                            style: GoogleFonts.raleway(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Recipe details not found.")),
+      );
+    }
+  } catch (e) {
+    Navigator.pop(context);
+    debugPrint("Error loading recipe: $e");
   }
-
+}
   /// Searches Firestore for recipes that contain all the ingredients in the pantry list
-  Future<void> _search() async {
-    if (_pantryList.isEmpty) return;
-    setState(() => _isSearching = true);
+Future<void> _search() async {
+  if (_pantryList.isEmpty) return;
+  setState(() {
+    _isSearching = true;
+    _foundRecipes = [];
+  });
 
-    /// Fetch a batch of recipes from Firestore (you may want to implement pagination for larger datasets)
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('recipes')
-          .limit(100)
+  try {
+    List<Set<String>> recipeSets = [];
+
+    for (String ingredient in _pantryList) {
+      String formattedName = ingredient.toLowerCase().trim().replaceAll(' ', '_');
+      Set<String> ingredientRecipes = {};
+
+      // 1. Exact match first
+      String exactId = "-_$formattedName";
+      DocumentSnapshot exactDoc = await FirebaseFirestore.instance
+          .collection('IngredientIndex')
+          .doc(exactId)
           .get();
 
-      List<Map<String, dynamic>> tempResults = [];
-
-      for (var doc in snapshot.docs) {
-        Map<String, dynamic> data = doc.data();
-        List recipeIngredients = data['ingredients'] ?? [];
-
-        bool hasAllIngredients = true;
-
-        /// For every ingredient in the pantry
-        for (String pantryItem in _pantryList) {
-          bool foundThisItem = false;
-
-          /// Check if it exists anywhere in the recipe ingredients list
-          for (var ingredientLine in recipeIngredients) {
-            if (ingredientLine.toString().toLowerCase().contains(
-              pantryItem.toLowerCase(),
-            )) {
-              foundThisItem = true;
-              break; // Stop looking for this specific item once found
-            }
-          }
-
-          /// If we didn't find even one of our items, the whole recipe fails
-          if (foundThisItem == false) {
-            hasAllIngredients = false;
-            break;
-          }
-        }
-
-        /// if we made it through the whole pantry list and found every item, this recipe is a match and we can add it to our results
-        if (hasAllIngredients == true) {
-          data['id'] = doc.id;
-          tempResults.add(data);
-        }
+      if (exactDoc.exists) {
+        List<dynamic> recipes = exactDoc.get('recipes') ?? [];
+        ingredientRecipes.addAll(recipes.cast<String>());
+        debugPrint("Exact match for $formattedName: ${ingredientRecipes.length} recipes");
       }
 
-      /// Update the state with the found recipes and stop the loading indicator
-      setState(() {
-        _foundRecipes = tempResults;
-        _isSearching = false;
-      });
-    } catch (e) {
-      setState(() => _isSearching = false);
-      debugPrint("Search Error: $e");
+      // 2. Prefix query to catch variants
+      String startId = "-_$formattedName";
+      String endId = "-_$formattedName\uf8ff";
+
+      QuerySnapshot prefixSnapshot = await FirebaseFirestore.instance
+          .collection('IngredientIndex')
+          .orderBy(FieldPath.documentId)
+          .startAt([startId])
+          .endAt([endId])
+          .get();
+
+      for (var doc in prefixSnapshot.docs) {
+        List<dynamic> recipes = doc.get('recipes') ?? [];
+        ingredientRecipes.addAll(recipes.cast<String>());
+      }
+
+      debugPrint("Total recipes for '$ingredient': ${ingredientRecipes.length}");
+
+      if (ingredientRecipes.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("'$ingredient' not recognized, skipping...")),
+        );
+        continue;
+      }
+
+      recipeSets.add(ingredientRecipes);
     }
+
+    if (recipeSets.isEmpty) {
+      setState(() => _foundRecipes = []);
+      return;
+    }
+
+    // Strict intersection
+    Set<String> commonTitles = recipeSets.reduce((a, b) => a.intersection(b));
+    debugPrint("Intersection result: ${commonTitles.length} recipes");
+
+    // Fallback best-effort if intersection is empty
+    if (commonTitles.isEmpty && recipeSets.length > 1) {
+      Map<String, int> recipeCount = {};
+      for (var set in recipeSets) {
+        for (var title in set) {
+          recipeCount[title] = (recipeCount[title] ?? 0) + 1;
+        }
+      }
+      int threshold = (recipeSets.length / 2).ceil();
+      commonTitles = recipeCount.entries
+          .where((e) => e.value >= threshold)
+          .map((e) => e.key)
+          .toSet();
+
+      if (commonTitles.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Showing closest matches for your ingredients")),
+        );
+      }
+    }
+
+    setState(() {
+      _foundRecipes = commonTitles.take(30).map((title) => {
+        'title': title,
+        'id': title,
+      }).toList();
+    });
+
+    if (_foundRecipes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No recipes found with those ingredients.")),
+      );
+    }
+
+  } catch (e) {
+    debugPrint("Search Error: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Something went wrong. Please try again.")),
+    );
+  } finally {
+    setState(() => _isSearching = false);
   }
+}
 
   /// Check if a recipe is already favorited by the current user
   Future<bool> _isFavorited(String recipeId) async {
@@ -590,8 +668,7 @@ class _HomeState extends State<Home> {
                                   color: Colors.green,
                                 ),
                                 title: Text(
-                                  recipe['recipe_title'] ??
-                                      "Recipe ID: ${recipe['id']}",
+                                  recipe['title'] ?? recipe['recipe_title'] ?? "Recipe",
                                   style: GoogleFonts.raleway(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
