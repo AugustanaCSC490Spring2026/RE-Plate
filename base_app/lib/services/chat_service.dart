@@ -26,7 +26,8 @@ content and offer tips to make recipes healthier without sacrificing flavour.
  
 5. **Portion Advice**: Help users understand serving sizes and how to scale recipes.
  
-Keep responses concise, practical, and encouraging. Use bullet points for lists. 
+Keep responses concise, practical, and encouraging. Ignore any grammar or spelling mistakes.
+Use bullet points for lists. 
 If you don't know something with confidence, say so rather than guessing. 
 Do not provide medical diagnoses or replace professional dietary advice — recommend consulting a 
 dietitian for medical concerns.
@@ -34,7 +35,7 @@ dietitian for medical concerns.
 
   Future<void> init() async {
     final model = GenerativeModel(
-      model: 'gemini-3.0-flash-lite',
+      model: 'gemini-2.5-flash',
       apiKey: _apiKey,
     );
     _chat = model.startChat();
