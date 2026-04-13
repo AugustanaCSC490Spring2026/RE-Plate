@@ -118,17 +118,40 @@ class _HomeState extends State<Home> {
               controller: scrollController,
               children: [
                 // Drag handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+Center(
+  child: Container(
+    width: 40,
+    height: 4,
+    margin: const EdgeInsets.only(bottom: 16),
+    decoration: BoxDecoration(
+      color: Colors.grey[300],
+      borderRadius: BorderRadius.circular(2),
+    ),
+  ),
+),
+
+// Back arrow + Title row
+Row(
+  children: [
+    IconButton(
+      icon: const Icon(Icons.arrow_back_ios, color: Colors.green),
+      onPressed: () => Navigator.pop(context),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+    ),
+    const SizedBox(width: 8),
+    Expanded(
+      child: Text(
+        fullData['title'] ?? 'Recipe',
+        style: GoogleFonts.raleway(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.green,
+        ),
+      ),
+    ),
+  ],
+),
 
                 // Title
                 Text(
