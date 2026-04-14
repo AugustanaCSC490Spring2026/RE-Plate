@@ -1,0 +1,235 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final List<String> _allRestrictions = [
+    'Vegetarian',
+    'Vegan',
+    'Gluten-Free',
+    'Dairy-Free',
+    'Nut-Free',
+    'Halal',
+    'Kosher',
+    'Low-Carb',
+    'Keto',
+    'Paleo',
+    'Low-Sodium',
+    'Egg-Free',
+    'Soy-Free',
+    'Shellfish-Free',
+  ];
+
+  Set<String> _selectedRestrictions = {};
+  bool _isLoading = true;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRestrictions();
+  }
+
+  Future<void> _loadRestrictions() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data();
+      final saved = List<String>.from(data?['dietaryRestrictions'] ?? []);
+      setState(() {
+        _selectedRestrictions = saved.toSet();
+      });
+    }
+
+    setState(() => _isLoading = false);
+  }
+
+  Future<void> _saveRestrictions() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    setState(() => _isSaving = true);
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .set({
+          'dietaryRestrictions': _selectedRestrictions.toList(),
+        }, SetOptions(merge: true));
+
+    setState(() => _isSaving = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Dietary preferences saved!")),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          "My Profile",
+          style: GoogleFonts.raleway(
+            textStyle: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.green),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.green))
+          : Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // User info header
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.green[100],
+                        child: Text(
+                          user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                          style: GoogleFonts.raleway(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user?.displayName ?? 'Chef',
+                            style: GoogleFonts.raleway(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            user?.email ?? '',
+                            style: GoogleFonts.raleway(
+                              fontSize: 13,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  Text(
+                    'Dietary Restrictions',
+                    style: GoogleFonts.raleway(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Select all that apply to you',
+                    style: GoogleFonts.raleway(
+                      fontSize: 13,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Restriction chips
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: _allRestrictions.map((restriction) {
+                          final isSelected = _selectedRestrictions.contains(restriction);
+                          return FilterChip(
+                            label: Text(
+                              restriction,
+                              style: GoogleFonts.raleway(
+                                color: isSelected ? Colors.white : Colors.green,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setState(() {
+                                if (selected) {
+                                  _selectedRestrictions.add(restriction);
+                                } else {
+                                  _selectedRestrictions.remove(restriction);
+                                }
+                              });
+                            },
+                            backgroundColor: Colors.green[50],
+                            selectedColor: Colors.green,
+                            checkmarkColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: Colors.green.shade300),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Save button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isSaving ? null : _saveRestrictions,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isSaving
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              "Save Preferences",
+                              style: GoogleFonts.raleway(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+}

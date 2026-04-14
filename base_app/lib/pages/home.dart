@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/history.dart';
 import 'package:base_app/pages/chat_box.dart';
+import 'package:base_app/pages/profile.dart';
 
 // credits to @MahdiNazmi for source code
 // github link:
@@ -543,6 +544,23 @@ Future<void> _search() async {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const HistoryPage()),
+                );
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.person_outline, color: Colors.green),
+              title: Text(
+                'My Profile',
+                style: GoogleFonts.raleway(
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
                 );
               },
             ),
