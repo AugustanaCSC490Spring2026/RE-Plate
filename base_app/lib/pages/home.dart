@@ -240,7 +240,6 @@ Row(
     }
   } catch (e) {
     Navigator.pop(context);
-    debugPrint("Error loading recipe: $e");
   }
 }
   /// Searches Firestore for recipes that contain all the ingredients in the pantry list
@@ -268,7 +267,7 @@ Future<void> _search() async {
       if (exactDoc.exists) {
         List<dynamic> recipes = exactDoc.get('recipes') ?? [];
         ingredientRecipes.addAll(recipes.cast<String>());
-        debugPrint("Exact match for $formattedName: ${ingredientRecipes.length} recipes");
+        
       }
 
       // 2. Prefix query to catch variants
@@ -287,7 +286,6 @@ Future<void> _search() async {
         ingredientRecipes.addAll(recipes.cast<String>());
       }
 
-      debugPrint("Total recipes for '$ingredient': ${ingredientRecipes.length}");
 
       if (ingredientRecipes.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -306,7 +304,6 @@ Future<void> _search() async {
 
     // Strict intersection
     Set<String> commonTitles = recipeSets.reduce((a, b) => a.intersection(b));
-    debugPrint("Intersection result: ${commonTitles.length} recipes");
 
     // Fallback best-effort if intersection is empty
     if (commonTitles.isEmpty && recipeSets.length > 1) {
@@ -343,7 +340,6 @@ Future<void> _search() async {
     }
 
   } catch (e) {
-    debugPrint("Search Error: $e");
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Something went wrong. Please try again.")),
     );
@@ -373,10 +369,7 @@ Future<void> _search() async {
     if (user == null) return;
 
     final recipeId = recipe['id'];
-    debugPrint("=== TOGGLE FAVORITE ===");
-    debugPrint("recipeId: $recipeId");
-    debugPrint("recipe map: $recipe");
-
+    
     final favoriteRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -393,9 +386,7 @@ Future<void> _search() async {
         .where('title', isEqualTo: recipeId)
         .limit(1)
         .get();
-        debugPrint("RecipeNLG query for title: $recipeId");
-      debugPrint("Docs found: ${snapshot.docs.length}");
-
+      
     Map<String, dynamic> fullData = {};
     if (snapshot.docs.isNotEmpty) {
       fullData = snapshot.docs.first.data();
