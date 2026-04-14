@@ -3,6 +3,8 @@ import 'package:base_app/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+// credits to @MahdiNazmi for source code
+// github link: 
 
 class Login extends StatelessWidget {
   Login({super.key});
