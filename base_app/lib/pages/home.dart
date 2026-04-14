@@ -372,6 +372,10 @@ Future<void> _search() async {
     if (user == null) return;
 
     final recipeId = recipe['id'];
+    debugPrint("=== TOGGLE FAVORITE ===");
+    debugPrint("recipeId: $recipeId");
+    debugPrint("recipe map: $recipe");
+
     final favoriteRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -383,14 +387,25 @@ Future<void> _search() async {
     if (doc.exists) {
       await favoriteRef.delete();
     } else {
+      final snapshot = await FirebaseFirestore.instance
+        .collection('RecipeNLG')
+        .where('title', isEqualTo: recipeId)
+        .limit(1)
+        .get();
+        debugPrint("RecipeNLG query for title: $recipeId");
+      debugPrint("Docs found: ${snapshot.docs.length}");
+
+    Map<String, dynamic> fullData = {};
+    if (snapshot.docs.isNotEmpty) {
+      fullData = snapshot.docs.first.data();
+    }
       await favoriteRef.set({
-        'recipe_title': recipe['recipe_title'] ?? 'Unnamed Recipe',
-        'ingredients': recipe['ingredients'] ?? [],
-        'directions': recipe['directions'] ?? [],
-        'preparation_steps': recipe['preparation_steps'] ?? [],
-        'id': recipeId,
-        'saved_at': FieldValue.serverTimestamp(),
-      });
+  'recipe_title': fullData['title'] ?? recipe['title'] ?? 'Unnamed Recipe',
+  'ingredients': fullData['ingredients'] ?? fullData['NER'] ?? [], // ← try NER as fallback
+  'directions': fullData['directions'] ?? [],
+  'id': recipeId,
+  'saved_at': FieldValue.serverTimestamp(),
+});
     }
 
     setState(() {});
