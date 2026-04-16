@@ -39,7 +39,7 @@ dietitian for medical concerns.
 
   Future<void> init() async {
     final model = GenerativeModel(
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       apiKey: _apiKey,
     );
     _chat = model.startChat();
