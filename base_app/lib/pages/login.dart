@@ -15,11 +15,11 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 245, 218, 122),
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _signup(context),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
         toolbarHeight: 90,
         leadingWidth: 72,
@@ -62,7 +62,7 @@ class Login extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
-                          color: Color(0xff4CAF50),
+                          color: Color.fromARGB(255, 190, 92, 223),
                           fontWeight: FontWeight.w700,
                           fontSize: 34,
                           letterSpacing: 0.2,
@@ -151,7 +151,7 @@ class Login extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: const BorderSide(
-                color: Color(0xff4CAF50),
+                color: Color.fromARGB(255, 186, 104, 224),
                 width: 1.2,
               ),
             ),
@@ -222,7 +222,7 @@ class Login extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: const BorderSide(
-                color: Color(0xff4CAF50),
+                color: Color.fromARGB(255, 197, 101, 219),
                 width: 1.2,
               ),
             ),
@@ -235,7 +235,7 @@ class Login extends StatelessWidget {
   Widget _signin(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xff4CAF50),
+        backgroundColor: Color.fromARGB(255, 236, 158, 42),
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
@@ -254,7 +254,7 @@ class Login extends StatelessWidget {
         "Sign In",
         style: GoogleFonts.raleway(
           textStyle: const TextStyle(
-            color: Colors.white,
+            color: Color.fromARGB(255, 225, 131, 222),
             fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
@@ -283,7 +283,7 @@ class Login extends StatelessWidget {
             TextSpan(
               text: "Create Account",
               style: const TextStyle(
-                color: Color(0xff1A1D1E),
+                color: Color.fromARGB(255, 163, 46, 206),
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),
