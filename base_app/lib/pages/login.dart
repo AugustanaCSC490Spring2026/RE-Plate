@@ -22,30 +22,6 @@ class Login extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
         toolbarHeight: 90,
-        leadingWidth: 72,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            margin: const EdgeInsets.only(left: 16, top: 12, bottom: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xffF7F7F9),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xffECECEC),
-                width: 1,
-              ),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.black87,
-                size: 18,
-              ),
-            ),
-          ),
-        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
