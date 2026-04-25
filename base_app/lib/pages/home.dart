@@ -147,7 +147,7 @@ Row(
         style: GoogleFonts.raleway(
           fontSize: 22,
           fontWeight: FontWeight.bold,
-          color: Colors.green,
+          color: const Color.fromARGB(255, 162, 76, 215),
         ),
       ),
     ),
@@ -160,7 +160,7 @@ Row(
                   style: GoogleFonts.raleway(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: const Color.fromARGB(255, 154, 67, 208),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -430,9 +430,9 @@ Future<void> _search() async {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 245, 218, 122),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
         title: Text(
           'Lets RE-Plate!',
@@ -444,7 +444,7 @@ Future<void> _search() async {
             ),
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.green),
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 236, 158, 42)),
       ),
       // I used CLaude AI assistance to learn about scafolding and putting things into
       // the sidebar
@@ -456,7 +456,7 @@ Future<void> _search() async {
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green, Colors.lightGreen],
+                  colors: [ Color.fromARGB(255, 245, 218, 122), Color.fromARGB(255, 226, 195, 110)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -491,7 +491,7 @@ Future<void> _search() async {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home_outlined, color: Colors.green),
+              leading: const Icon(Icons.home_outlined, color:  Color.fromARGB(255, 245, 218, 122)),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -503,7 +503,7 @@ Future<void> _search() async {
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color: Colors.green,
+                color:  Color.fromARGB(255, 245, 218, 122),
               ),
               title: Text(
                 'My Plates',
@@ -523,7 +523,7 @@ Future<void> _search() async {
             ),
 
             ListTile(
-              leading: const Icon(Icons.history_outlined, color: Colors.green),
+              leading: const Icon(Icons.history_outlined, color:  Color.fromARGB(255, 245, 218, 122)),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -540,7 +540,7 @@ Future<void> _search() async {
             ),
 
             ListTile(
-              leading: const Icon(Icons.person_outline, color: Colors.green),
+              leading: const Icon(Icons.person_outline, color:  Color.fromARGB(255, 245, 218, 122)),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -614,7 +614,7 @@ Future<void> _search() async {
                 decoration: InputDecoration(
                   hintText: "Add ingredient...",
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.add_circle, color: Colors.green),
+                    icon: const Icon(Icons.add_circle, color: Color.fromARGB(255, 159, 77, 207)),
                     onPressed: _addIngredient,
                   ),
                   filled: true,
@@ -661,7 +661,7 @@ Future<void> _search() async {
                   child: ElevatedButton(
                     onPressed: _search,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor:  Color.fromARGB(255, 245, 218, 122),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -684,7 +684,7 @@ Future<void> _search() async {
               Expanded(
                 child: _isSearching
                     ? const Center(
-                        child: CircularProgressIndicator(color: Colors.green),
+                        child: CircularProgressIndicator(color:  Color.fromARGB(255, 205, 180, 91)),
                       )
                     : _foundRecipes.isEmpty
                     ? Center(

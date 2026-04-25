@@ -16,11 +16,11 @@ class Signup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 245, 218, 122),
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _signin(context),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
         toolbarHeight: 80,
       ),
@@ -249,7 +249,7 @@ class Signup extends StatelessWidget {
   Widget _signup(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xff4CAF50),
+        backgroundColor:  Color.fromARGB(255, 245, 218, 122),
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         minimumSize: const Size(double.infinity, 62),

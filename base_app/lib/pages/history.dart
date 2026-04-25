@@ -56,7 +56,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 style: GoogleFonts.raleway(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: const Color.fromARGB(255, 210, 91, 236),
                 ),
               ),
               const SizedBox(height: 20),
@@ -231,20 +231,28 @@ Future<void> _toggleFavorite(Map<String, dynamic> recipe) async {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 245, 218, 122),
       appBar: AppBar(
-        title: Text(
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+          Image.asset('lib/assets/images/replateLogo.png', height: 36),
+          const SizedBox(height: 4),
+        Text(
           "History",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Colors.green,
+              color: Color.fromARGB(255, 176, 70, 198),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        backgroundColor: Colors.white,
+        ],
+      ), 
+        backgroundColor:  Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.green),
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 149, 81, 222)),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
@@ -263,7 +271,7 @@ Future<void> _toggleFavorite(Map<String, dynamic> recipe) async {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+              child: CircularProgressIndicator(color:  Color.fromARGB(255, 245, 218, 122)),
             );
           }
 
@@ -293,7 +301,7 @@ Future<void> _toggleFavorite(Map<String, dynamic> recipe) async {
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.history, color: Colors.green),
+      leading: const Icon(Icons.history, color: Color.fromARGB(255, 128, 68, 197)),
       title: Text(
         recipe['recipe_title'] ?? 'Unnamed Recipe',
         style: GoogleFonts.raleway(
