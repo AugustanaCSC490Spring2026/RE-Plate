@@ -747,7 +747,7 @@ Future<void> _search() async {
         ),
       ),
         floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
+        backgroundColor: const Color.fromARGB(255, 209, 138, 37),
         child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
         onPressed: () => showModalBottomSheet(
           context: context,
