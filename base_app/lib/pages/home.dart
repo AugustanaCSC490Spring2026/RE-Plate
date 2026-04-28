@@ -135,7 +135,7 @@ Center(
 Row(
   children: [
     IconButton(
-      icon: const Icon(Icons.arrow_back_ios, color: Colors.green),
+      icon: const Icon(Icons.arrow_back_ios, color: Color.fromARGB(255, 195, 88, 17)),
       onPressed: () => Navigator.pop(context),
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
@@ -211,7 +211,7 @@ Row(
                       children: [
                         CircleAvatar(
                           radius: 12,
-                          backgroundColor: Colors.green,
+                          backgroundColor: Color.fromARGB(255, 195, 88, 17),
                           child: Text(
                             '${entry.key + 1}',
                             style: const TextStyle(color: Colors.white, fontSize: 11),
@@ -438,13 +438,13 @@ Future<void> _search() async {
           'Lets RE-Plate!',
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Colors.green,
+              color: Color.fromARGB(255, 195, 88, 17),
               fontWeight: FontWeight.bold,
               fontSize: 24,
             ),
           ),
         ),
-        iconTheme: const IconThemeData(color: Color.fromARGB(255, 236, 158, 42)),
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 236, 110, 31)),
       ),
       // I used CLaude AI assistance to learn about scafolding and putting things into
       // the sidebar
@@ -482,7 +482,7 @@ Future<void> _search() async {
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Colors.green,
+                      color: Color.fromARGB(255, 111, 87, 192),
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),
@@ -491,7 +491,7 @@ Future<void> _search() async {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home_outlined, color:  Color.fromARGB(255, 245, 218, 122)),
+              leading: const Icon(Icons.home_outlined, color:  Color.fromARGB(255, 109, 83, 194)),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -503,7 +503,7 @@ Future<void> _search() async {
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color:  Color.fromARGB(255, 245, 218, 122),
+                color:  Color.fromARGB(255, 120, 69, 182),
               ),
               title: Text(
                 'My Plates',
@@ -523,7 +523,7 @@ Future<void> _search() async {
             ),
 
             ListTile(
-              leading: const Icon(Icons.history_outlined, color:  Color.fromARGB(255, 245, 218, 122)),
+              leading: const Icon(Icons.history_outlined, color:  Color.fromARGB(255, 130, 72, 183)),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -540,7 +540,7 @@ Future<void> _search() async {
             ),
 
             ListTile(
-              leading: const Icon(Icons.person_outline, color:  Color.fromARGB(255, 245, 218, 122)),
+              leading: const Icon(Icons.person_outline, color:  Color.fromARGB(255, 97, 57, 163)),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -596,16 +596,9 @@ Future<void> _search() async {
                 style: GoogleFonts.raleway(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: Color.fromARGB(255, 195, 88, 17),
                 ),
               ),
-              const SizedBox(height: 5),
-              const SizedBox(height: 5),
-              Text(
-                'Find recipes that use all these ingredients:',
-                style: GoogleFonts.raleway(color: Colors.grey),
-              ),
-              const SizedBox(height: 20),
 
               // search the input field for adding ingredients to the pantry list, with an add button and submit on enter functionality
               TextField(
