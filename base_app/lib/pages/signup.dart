@@ -36,7 +36,7 @@ class Signup extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Create Account',
+                      'Create Your RE-Plate Account',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
@@ -49,7 +49,7 @@ class Signup extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       /*  */
-                      'Sign up to get started',
+                      'Cook smarter with what you already have',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
@@ -249,7 +249,7 @@ class Signup extends StatelessWidget {
   Widget _signup(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor:  Color.fromARGB(255, 245, 218, 122),
+        backgroundColor: Color.fromARGB(255, 245, 218, 122),
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         minimumSize: const Size(double.infinity, 62),

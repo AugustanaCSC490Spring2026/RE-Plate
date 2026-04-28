@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 // credits to @MahdiNazmi for source code
-// github link: 
+// github link:
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -34,7 +34,7 @@ class Login extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Welcome back!',
+                      'Welcome to RE-Plate!',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
@@ -47,7 +47,7 @@ class Login extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Sign in to continue to your account',
+                      'Sign in to Start Cooking',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
@@ -119,10 +119,7 @@ class Login extends StatelessWidget {
             fillColor: const Color(0xffF7F7F9),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(
-                color: Color(0xffEEEEEE),
-                width: 1,
-              ),
+              borderSide: const BorderSide(color: Color(0xffEEEEEE), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
@@ -190,10 +187,7 @@ class Login extends StatelessWidget {
             fillColor: const Color(0xffF7F7F9),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(
-                color: Color(0xffEEEEEE),
-                width: 1,
-              ),
+              borderSide: const BorderSide(color: Color(0xffEEEEEE), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
@@ -213,9 +207,7 @@ class Login extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Color.fromARGB(255, 236, 158, 42),
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         minimumSize: const Size(double.infinity, 62),
         elevation: 0,
       ),
@@ -267,9 +259,7 @@ class Login extends StatelessWidget {
                 ..onTap = () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => Signup(),
-                    ),
+                    MaterialPageRoute(builder: (context) => Signup()),
                   );
                 },
             ),
