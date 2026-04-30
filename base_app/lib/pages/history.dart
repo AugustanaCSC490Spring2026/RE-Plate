@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/home.dart';
-import 'package:base_app/pages/chat_box.dart';
 import 'package:base_app/pages/profile.dart';
 
 
@@ -272,7 +271,7 @@ Future<void> _toggleFavorite(Map<String, dynamic> recipe) async {
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Color.fromARGB(255, 195, 88, 17),
+                      color: Color.fromARGB(255, 103, 17, 195),
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),

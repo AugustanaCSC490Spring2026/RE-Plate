@@ -36,7 +36,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.85,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: Color.fromARGB(255, 245, 218, 122),
           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
         padding: const EdgeInsets.all(24),
@@ -60,7 +60,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 style: GoogleFonts.raleway(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color:  Color.fromARGB(255, 236, 110, 31),
                 ),
               ),
               const SizedBox(height: 20),
@@ -151,9 +151,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:Color.fromARGB(255, 245, 218, 122),
       drawer: Drawer(
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 243, 242, 240),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -291,14 +291,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
           "My Plates",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Colors.green,
+              color:  Color.fromARGB(255, 236, 110, 31),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.green),
+        iconTheme: const IconThemeData(color:  Color.fromARGB(255, 236, 110, 31)),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -310,7 +310,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+              child: CircularProgressIndicator(color: Color.fromARGB(255, 236, 110, 31)),
             );
           }
 
@@ -318,7 +318,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             return Center(
               child: Text(
                 "No favorite recipes yet",
-                style: GoogleFonts.raleway(color: Colors.grey),
+                style: GoogleFonts.raleway(color:  Color.fromARGB(255, 236, 110, 31)),
               ),
             );
           }
@@ -335,7 +335,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
               return ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.restaurant_menu, color: Colors.green),
+                leading: const Icon(Icons.restaurant_menu, color: Color.fromARGB(255, 236, 110, 31)),
                 title: Text(
                   recipe['recipe_title'] ?? 'Unnamed Recipe',
                   style: GoogleFonts.raleway(

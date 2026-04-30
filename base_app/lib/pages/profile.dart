@@ -88,9 +88,9 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 245, 218, 122),
       drawer: Drawer(
-        backgroundColor: Colors.white,
+        backgroundColor:Color.fromARGB(255, 248, 247, 245),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -228,17 +228,17 @@ class _ProfilePageState extends State<ProfilePage> {
           "My Profile",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Colors.green,
+              color:  Color.fromARGB(255, 236, 110, 31),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.green),
+        iconTheme: const IconThemeData(color:  Color.fromARGB(255, 236, 110, 31)),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.green))
+          ? const Center(child: CircularProgressIndicator(color:  Color.fromARGB(255, 236, 110, 31)))
           : Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -249,13 +249,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor: Colors.green[100],
+                        backgroundColor: const Color.fromARGB(255, 237, 242, 237),
                         child: Text(
                           user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                           style: GoogleFonts.raleway(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: const Color.fromARGB(255, 82, 40, 173),
                           ),
                         ),
                       ),
@@ -289,7 +289,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: GoogleFonts.raleway(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: Color.fromARGB(255, 236, 110, 31),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -314,7 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: Text(
                               restriction,
                               style: GoogleFonts.raleway(
-                                color: isSelected ? Colors.white : Colors.green,
+                                color: isSelected ? Colors.white : Color.fromARGB(255, 236, 110, 31),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -328,12 +328,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 }
                               });
                             },
-                            backgroundColor: Colors.green[50],
-                            selectedColor: Colors.green,
+                            backgroundColor: Color.fromARGB(255, 245, 218, 122),
+                            selectedColor:  Color.fromARGB(255, 236, 110, 31),
                             checkmarkColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: Colors.green.shade300),
+                              side: BorderSide(color:  Color.fromARGB(255, 236, 110, 31)),
                             ),
                           );
                         }).toList(),
@@ -350,7 +350,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: ElevatedButton(
                       onPressed: _isSaving ? null : _saveRestrictions,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor:  Color.fromARGB(255, 236, 110, 31),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

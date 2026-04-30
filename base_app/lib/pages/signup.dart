@@ -40,7 +40,7 @@ class Signup extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
-                          color: Color(0xff4CAF50),
+                          color:  Color.fromARGB(255, 236, 110, 31),
                           fontWeight: FontWeight.w700,
                           fontSize: 34,
                         ),
@@ -180,7 +180,7 @@ class Signup extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: const BorderSide(
-                color: Color(0xff4CAF50),
+                color:  Color.fromARGB(255, 236, 110, 31),
                 width: 1.2,
               ),
             ),
@@ -236,7 +236,7 @@ class Signup extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: const BorderSide(
-                color: Color(0xff4CAF50),
+                color:  Color.fromARGB(255, 236, 110, 31),
                 width: 1.2,
               ),
             ),
@@ -267,7 +267,7 @@ class Signup extends StatelessWidget {
         "Sign Up",
         style: GoogleFonts.raleway(
           textStyle: const TextStyle(
-            color: Colors.white,
+            color: Color.fromARGB(255, 66, 24, 164),
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -294,7 +294,7 @@ class Signup extends StatelessWidget {
             TextSpan(
               text: "Log In",
               style: const TextStyle(
-                color: Color(0xff1A1D1E),
+                color: Color.fromARGB(255, 62, 15, 138),
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),
