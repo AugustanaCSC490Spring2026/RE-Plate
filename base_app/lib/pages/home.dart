@@ -78,275 +78,303 @@ class _HomeState extends State<Home> {
 
   /// A function to show recipe details in a bottom sheet
   void _showRecipeDetails(Map<String, dynamic> recipe) async {
-  showDialog(
-    context: context,
-    builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.green)),
-  );
+    showDialog(
+      context: context,
+      builder: (context) =>
+          const Center(child: CircularProgressIndicator(color: Colors.green)),
+    );
 
-  try {
-    var snapshot = await FirebaseFirestore.instance
-        .collection('RecipeNLG')
-        .where('title', isEqualTo: recipe['title'])
-        .limit(1)
-        .get();
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection('RecipeNLG')
+          .where('title', isEqualTo: recipe['title'])
+          .limit(1)
+          .get();
 
-    Navigator.pop(context); // Remove loader
+      Navigator.pop(context); // Remove loader
 
-    if (snapshot.docs.isNotEmpty) {
-      var fullData = snapshot.docs.first.data();
+      if (snapshot.docs.isNotEmpty) {
+        var fullData = snapshot.docs.first.data();
 
-      _logHistory({
-        ...fullData,
-        'id': recipe['title'],
-        'recipe_title': fullData['title'],
-      });
+        _logHistory({
+          ...fullData,
+          'id': recipe['title'],
+          'recipe_title': fullData['title'],
+        });
 
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.5,
-          builder: (context, scrollController) => Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            padding: const EdgeInsets.all(24),
-            child: ListView(
-              controller: scrollController,
-              children: [
-                // Drag handle
-Center(
-  child: Container(
-    width: 40,
-    height: 4,
-    margin: const EdgeInsets.only(bottom: 16),
-    decoration: BoxDecoration(
-      color: Colors.grey[300],
-      borderRadius: BorderRadius.circular(2),
-    ),
-  ),
-),
-
-// Back arrow + Title row
-Row(
-  children: [
-    IconButton(
-      icon: const Icon(Icons.arrow_back_ios, color: Color.fromARGB(255, 195, 88, 17)),
-      onPressed: () => Navigator.pop(context),
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
-    ),
-    const SizedBox(width: 8),
-    Expanded(
-      child: Text(
-        fullData['title'] ?? 'Recipe',
-        style: GoogleFonts.raleway(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: const Color.fromARGB(255, 162, 76, 215),
-        ),
-      ),
-    ),
-  ],
-),
-
-                // Title
-                Text(
-                  fullData['title'] ?? 'Recipe',
-                  style: GoogleFonts.raleway(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 154, 67, 208),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Ingredients section
-                Text(
-                  'Ingredients',
-                  style: GoogleFonts.raleway(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ...(fullData['ingredients'] as List<dynamic>? ?? []).map(
-                  (ingredient) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.fiber_manual_record, size: 8, color: Colors.green),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            ingredient.toString(),
-                            style: GoogleFonts.raleway(fontSize: 14),
-                          ),
-                        ),
-                      ],
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => DraggableScrollableSheet(
+            initialChildSize: 0.85,
+            maxChildSize: 0.95,
+            minChildSize: 0.5,
+            builder: (context, scrollController) => Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              padding: const EdgeInsets.all(24),
+              child: ListView(
+                controller: scrollController,
+                children: [
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
 
-                // Directions section
-                Text(
-                  'Directions',
-                  style: GoogleFonts.raleway(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  // Back arrow + Title row
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Color.fromARGB(255, 195, 88, 17),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          fullData['title'] ?? 'Recipe',
+                          style: GoogleFonts.raleway(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 162, 76, 215),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                ...(fullData['directions'] as List<dynamic>? ?? []).asMap().entries.map(
-                  (entry) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundColor: Color.fromARGB(255, 195, 88, 17),
-                          child: Text(
-                            '${entry.key + 1}',
-                            style: const TextStyle(color: Colors.white, fontSize: 11),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            entry.value.toString(),
-                            style: GoogleFonts.raleway(fontSize: 14),
-                          ),
-                        ),
-                      ],
+
+                  // Title
+                  Text(
+                    fullData['title'] ?? 'Recipe',
+                    style: GoogleFonts.raleway(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 154, 67, 208),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+
+                  // Ingredients section
+                  Text(
+                    'Ingredients',
+                    style: GoogleFonts.raleway(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...(fullData['ingredients'] as List<dynamic>? ?? []).map(
+                    (ingredient) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.fiber_manual_record,
+                            size: 8,
+                            color: Colors.green,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              ingredient.toString(),
+                              style: GoogleFonts.raleway(fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Directions section
+                  Text(
+                    'Directions',
+                    style: GoogleFonts.raleway(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...(fullData['directions'] as List<dynamic>? ?? [])
+                      .asMap()
+                      .entries
+                      .map(
+                        (entry) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 12,
+                                backgroundColor: Color.fromARGB(
+                                  255,
+                                  195,
+                                  88,
+                                  17,
+                                ),
+                                child: Text(
+                                  '${entry.key + 1}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  entry.value.toString(),
+                                  style: GoogleFonts.raleway(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Recipe details not found.")),
-      );
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Recipe details not found.")),
+        );
+      }
+    } catch (e) {
+      Navigator.pop(context);
     }
-  } catch (e) {
-    Navigator.pop(context);
   }
-}
+
   /// Searches Firestore for recipes that contain all the ingredients in the pantry list
-Future<void> _search() async {
-  if (_pantryList.isEmpty) return;
-  setState(() {
-    _isSearching = true;
-    _foundRecipes = [];
-  });
-
-  try {
-    List<Set<String>> recipeSets = [];
-
-    for (String ingredient in _pantryList) {
-      String formattedName = ingredient.toLowerCase().trim().replaceAll(' ', '_');
-      Set<String> ingredientRecipes = {};
-
-      // 1. Exact match first
-      String exactId = "-_$formattedName";
-      DocumentSnapshot exactDoc = await FirebaseFirestore.instance
-          .collection('IngredientIndex')
-          .doc(exactId)
-          .get();
-
-      if (exactDoc.exists) {
-        List<dynamic> recipes = exactDoc.get('recipes') ?? [];
-        ingredientRecipes.addAll(recipes.cast<String>());
-        
-      }
-
-      // 2. Prefix query to catch variants
-      String startId = "-_$formattedName";
-      String endId = "-_$formattedName\uf8ff";
-
-      QuerySnapshot prefixSnapshot = await FirebaseFirestore.instance
-          .collection('IngredientIndex')
-          .orderBy(FieldPath.documentId)
-          .startAt([startId])
-          .endAt([endId])
-          .get();
-
-      for (var doc in prefixSnapshot.docs) {
-        List<dynamic> recipes = doc.get('recipes') ?? [];
-        ingredientRecipes.addAll(recipes.cast<String>());
-      }
-
-
-      if (ingredientRecipes.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("'$ingredient' not recognized, skipping...")),
-        );
-        continue;
-      }
-
-      recipeSets.add(ingredientRecipes);
-    }
-
-    if (recipeSets.isEmpty) {
-      setState(() => _foundRecipes = []);
-      return;
-    }
-
-    // Strict intersection
-    Set<String> commonTitles = recipeSets.reduce((a, b) => a.intersection(b));
-
-    // Fallback best-effort if intersection is empty
-    if (commonTitles.isEmpty && recipeSets.length > 1) {
-      Map<String, int> recipeCount = {};
-      for (var set in recipeSets) {
-        for (var title in set) {
-          recipeCount[title] = (recipeCount[title] ?? 0) + 1;
-        }
-      }
-      int threshold = (recipeSets.length / 2).ceil();
-      commonTitles = recipeCount.entries
-          .where((e) => e.value >= threshold)
-          .map((e) => e.key)
-          .toSet();
-
-      if (commonTitles.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Showing closest matches for your ingredients")),
-        );
-      }
-    }
-
+  Future<void> _search() async {
+    if (_pantryList.isEmpty) return;
     setState(() {
-      _foundRecipes = commonTitles.take(30).map((title) => {
-        'title': title,
-        'id': title,
-      }).toList();
+      _isSearching = true;
+      _foundRecipes = [];
     });
 
-    if (_foundRecipes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No recipes found with those ingredients.")),
-      );
-    }
+    try {
+      List<Set<String>> recipeSets = [];
 
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Something went wrong. Please try again.")),
-    );
-  } finally {
-    setState(() => _isSearching = false);
+      for (String ingredient in _pantryList) {
+        String formattedName = ingredient.toLowerCase().trim().replaceAll(
+          ' ',
+          '_',
+        );
+        Set<String> ingredientRecipes = {};
+
+        // 1. Exact match first
+        String exactId = "-_$formattedName";
+        DocumentSnapshot exactDoc = await FirebaseFirestore.instance
+            .collection('IngredientIndex')
+            .doc(exactId)
+            .get();
+
+        if (exactDoc.exists) {
+          List<dynamic> recipes = exactDoc.get('recipes') ?? [];
+          ingredientRecipes.addAll(recipes.cast<String>());
+        }
+
+        // 2. Prefix query to catch variants
+        String startId = "-_$formattedName";
+        String endId = "-_$formattedName\uf8ff";
+
+        QuerySnapshot prefixSnapshot = await FirebaseFirestore.instance
+            .collection('IngredientIndex')
+            .orderBy(FieldPath.documentId)
+            .startAt([startId])
+            .endAt([endId])
+            .get();
+
+        for (var doc in prefixSnapshot.docs) {
+          List<dynamic> recipes = doc.get('recipes') ?? [];
+          ingredientRecipes.addAll(recipes.cast<String>());
+        }
+
+        if (ingredientRecipes.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("'$ingredient' not recognized, skipping..."),
+            ),
+          );
+          continue;
+        }
+
+        recipeSets.add(ingredientRecipes);
+      }
+
+      if (recipeSets.isEmpty) {
+        setState(() => _foundRecipes = []);
+        return;
+      }
+
+      // Strict intersection
+      Set<String> commonTitles = recipeSets.reduce((a, b) => a.intersection(b));
+
+      // Fallback best-effort if intersection is empty
+      if (commonTitles.isEmpty && recipeSets.length > 1) {
+        Map<String, int> recipeCount = {};
+        for (var set in recipeSets) {
+          for (var title in set) {
+            recipeCount[title] = (recipeCount[title] ?? 0) + 1;
+          }
+        }
+        int threshold = (recipeSets.length / 2).ceil();
+        commonTitles = recipeCount.entries
+            .where((e) => e.value >= threshold)
+            .map((e) => e.key)
+            .toSet();
+
+        if (commonTitles.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Showing closest matches for your ingredients"),
+            ),
+          );
+        }
+      }
+
+      setState(() {
+        _foundRecipes = commonTitles
+            .take(30)
+            .map((title) => {'title': title, 'id': title})
+            .toList();
+      });
+
+      if (_foundRecipes.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No recipes found with those ingredients."),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Something went wrong. Please try again."),
+        ),
+      );
+    } finally {
+      setState(() => _isSearching = false);
+    }
   }
-}
 
   /// Check if a recipe is already favorited by the current user
   Future<bool> _isFavorited(String recipeId) async {
@@ -369,7 +397,7 @@ Future<void> _search() async {
     if (user == null) return;
 
     final recipeId = recipe['id'];
-    
+
     final favoriteRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -382,22 +410,26 @@ Future<void> _search() async {
       await favoriteRef.delete();
     } else {
       final snapshot = await FirebaseFirestore.instance
-        .collection('RecipeNLG')
-        .where('title', isEqualTo: recipeId)
-        .limit(1)
-        .get();
-      
-    Map<String, dynamic> fullData = {};
-    if (snapshot.docs.isNotEmpty) {
-      fullData = snapshot.docs.first.data();
-    }
+          .collection('RecipeNLG')
+          .where('title', isEqualTo: recipeId)
+          .limit(1)
+          .get();
+
+      Map<String, dynamic> fullData = {};
+      if (snapshot.docs.isNotEmpty) {
+        fullData = snapshot.docs.first.data();
+      }
       await favoriteRef.set({
-  'recipe_title': fullData['title'] ?? recipe['title'] ?? 'Unnamed Recipe',
-  'ingredients': fullData['ingredients'] ?? fullData['NER'] ?? [], // ← try NER as fallback
-  'directions': fullData['directions'] ?? [],
-  'id': recipeId,
-  'saved_at': FieldValue.serverTimestamp(),
-});
+        'recipe_title':
+            fullData['title'] ?? recipe['title'] ?? 'Unnamed Recipe',
+        'ingredients':
+            fullData['ingredients'] ??
+            fullData['NER'] ??
+            [], // ← try NER as fallback
+        'directions': fullData['directions'] ?? [],
+        'id': recipeId,
+        'saved_at': FieldValue.serverTimestamp(),
+      });
     }
 
     setState(() {});
@@ -444,7 +476,9 @@ Future<void> _search() async {
             ),
           ),
         ),
-        iconTheme: const IconThemeData(color: Color.fromARGB(255, 236, 110, 31)),
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(255, 236, 110, 31),
+        ),
       ),
       // I used CLaude AI assistance to learn about scafolding and putting things into
       // the sidebar
@@ -456,7 +490,10 @@ Future<void> _search() async {
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [ Color.fromARGB(255, 245, 218, 122), Color.fromARGB(255, 226, 195, 110)],
+                  colors: [
+                    Color.fromARGB(255, 245, 218, 122),
+                    Color.fromARGB(255, 226, 195, 110),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -491,7 +528,10 @@ Future<void> _search() async {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home_outlined, color:  Color.fromARGB(255, 109, 83, 194)),
+              leading: const Icon(
+                Icons.home_outlined,
+                color: Color.fromARGB(255, 109, 83, 194),
+              ),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -503,7 +543,7 @@ Future<void> _search() async {
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color:  Color.fromARGB(255, 120, 69, 182),
+                color: Color.fromARGB(255, 120, 69, 182),
               ),
               title: Text(
                 'My Plates',
@@ -523,7 +563,10 @@ Future<void> _search() async {
             ),
 
             ListTile(
-              leading: const Icon(Icons.history_outlined, color:  Color.fromARGB(255, 130, 72, 183)),
+              leading: const Icon(
+                Icons.history_outlined,
+                color: Color.fromARGB(255, 130, 72, 183),
+              ),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -540,7 +583,10 @@ Future<void> _search() async {
             ),
 
             ListTile(
-              leading: const Icon(Icons.person_outline, color:  Color.fromARGB(255, 97, 57, 163)),
+              leading: const Icon(
+                Icons.person_outline,
+                color: Color.fromARGB(255, 97, 57, 163),
+              ),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -607,7 +653,10 @@ Future<void> _search() async {
                 decoration: InputDecoration(
                   hintText: "Add ingredient...",
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.add_circle, color: Color.fromARGB(255, 159, 77, 207)),
+                    icon: const Icon(
+                      Icons.add_circle,
+                      color: Color.fromARGB(255, 159, 77, 207),
+                    ),
                     onPressed: _addIngredient,
                   ),
                   filled: true,
@@ -654,7 +703,7 @@ Future<void> _search() async {
                   child: ElevatedButton(
                     onPressed: _search,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:  Color.fromARGB(255, 245, 218, 122),
+                      backgroundColor: Color.fromARGB(255, 245, 218, 122),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -677,7 +726,9 @@ Future<void> _search() async {
               Expanded(
                 child: _isSearching
                     ? const Center(
-                        child: CircularProgressIndicator(color:  Color.fromARGB(255, 205, 180, 91)),
+                        child: CircularProgressIndicator(
+                          color: Color.fromARGB(255, 205, 180, 91),
+                        ),
                       )
                     : _foundRecipes.isEmpty
                     ? Center(
@@ -708,7 +759,9 @@ Future<void> _search() async {
                                   color: Colors.green,
                                 ),
                                 title: Text(
-                                  recipe['title'] ?? recipe['recipe_title'] ?? "Recipe",
+                                  recipe['title'] ??
+                                      recipe['recipe_title'] ??
+                                      "Recipe",
                                   style: GoogleFonts.raleway(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -746,7 +799,7 @@ Future<void> _search() async {
           ),
         ),
       ),
-        floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(255, 209, 138, 37),
         child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
         onPressed: () => showModalBottomSheet(
@@ -761,4 +814,4 @@ Future<void> _search() async {
       ),
     );
   }
-}/*  */
+} /*  */

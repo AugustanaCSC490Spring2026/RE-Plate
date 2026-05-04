@@ -41,6 +41,7 @@ dietitian for medical concerns.
     final model = GenerativeModel(
       model: 'gemini-2.5-flash-lite',
       apiKey: _apiKey,
+      systemInstruction: Content.system(_systemPrompt),
     );
     _chat = model.startChat();
   }
