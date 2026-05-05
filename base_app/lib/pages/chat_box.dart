@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/services/chat_service.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class _Message {
   final String text;
@@ -33,7 +34,9 @@ class _ChatBoxState extends State<ChatBox> {
 
   Future<void> _sendSuggestion(String suggestion) async {
     // Strip the emoji before sending to the AI
-    final clean = suggestion.replaceAll(RegExp(r'\s?\p{So}+$', unicode: true), '').trim();
+    final clean = suggestion
+        .replaceAll(RegExp(r'\s?\p{So}+$', unicode: true), '')
+        .trim();
     _controller.text = clean;
     await _sendMessage();
   }
@@ -56,10 +59,12 @@ class _ChatBoxState extends State<ChatBox> {
       });
     } catch (e) {
       setState(() {
-        _messages.add(_Message(
-          text: 'Something went wrong. Please try again.',
-          isUser: false,
-        ));
+        _messages.add(
+          _Message(
+            text: 'Something went wrong. Please try again.',
+            isUser: false,
+          ),
+        );
       });
     } finally {
       setState(() => _isLoading = false);
@@ -98,7 +103,9 @@ class _ChatBoxState extends State<ChatBox> {
           Text(
             'FoodieAI',
             style: GoogleFonts.raleway(
-                fontSize: 16, fontWeight: FontWeight.w600),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const Divider(),
 
@@ -109,14 +116,19 @@ class _ChatBoxState extends State<ChatBox> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.restaurant_menu,
-                            size: 40, color: Colors.grey.shade400),
+                        Icon(
+                          Icons.restaurant_menu,
+                          size: 40,
+                          color: Colors.grey.shade400,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'Ask me about nutrition,\nsubstitutions, or any recipe!',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.raleway(
-                              color: Colors.grey, fontSize: 14),
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -137,10 +149,13 @@ class _ChatBoxState extends State<ChatBox> {
                               onTap: () => _sendSuggestion(s),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 9),
+                                  horizontal: 14,
+                                  vertical: 9,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary
-                                      .withOpacity(0.08),
+                                  color: theme.colorScheme.primary.withOpacity(
+                                    0.08,
+                                  ),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: theme.colorScheme.primary
@@ -165,12 +180,13 @@ class _ChatBoxState extends State<ChatBox> {
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     itemCount: _messages.length,
                     itemBuilder: (context, index) {
                       final msg = _messages[index];
-                      return _ChatBubble(
-                          message: msg.text, isUser: msg.isUser);
+                      return _ChatBubble(message: msg.text, isUser: msg.isUser);
                     },
                   ),
           ),
@@ -178,8 +194,7 @@ class _ChatBoxState extends State<ChatBox> {
           // Typing indicator
           if (_isLoading)
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Row(
                 children: [
                   SizedBox(
@@ -191,9 +206,13 @@ class _ChatBoxState extends State<ChatBox> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text('Thinking...',
-                      style: GoogleFonts.raleway(
-                          fontSize: 12, color: Colors.grey)),
+                  Text(
+                    'Thinking...',
+                    style: GoogleFonts.raleway(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -202,8 +221,7 @@ class _ChatBoxState extends State<ChatBox> {
 
           // Input row
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Row(
               children: [
                 Expanded(
@@ -215,9 +233,13 @@ class _ChatBoxState extends State<ChatBox> {
                     decoration: InputDecoration(
                       hintText: 'Ask about nutrition or substitutions…',
                       hintStyle: GoogleFonts.raleway(
-                          fontSize: 13, color: Colors.grey),
+                        fontSize: 13,
+                        color: Colors.grey,
+                      ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,
@@ -259,15 +281,12 @@ class _ChatBubble extends StatelessWidget {
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.72,
         ),
         decoration: BoxDecoration(
-          color: isUser
-              ? theme.colorScheme.primary
-              : Colors.grey.shade200,
+          color: isUser ? theme.colorScheme.primary : Colors.grey.shade200,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(18),
             topRight: const Radius.circular(18),
@@ -275,14 +294,44 @@ class _ChatBubble extends StatelessWidget {
             bottomRight: Radius.circular(isUser ? 4 : 18),
           ),
         ),
-        child: Text(
-          message,
-          style: GoogleFonts.raleway(
-            fontSize: 13.5,
-            color: isUser ? Colors.white : Colors.black87,
-            height: 1.45,
-          ),
-        ),
+        child: isUser
+            ? Text(
+                message,
+                style: GoogleFonts.raleway(
+                  fontSize: 13.5,
+                  color: Colors.white,
+                  height: 1.45,
+                ),
+              )
+            : MarkdownBody(
+                data: message,
+                styleSheet: MarkdownStyleSheet(
+                  p: GoogleFonts.raleway(
+                    fontSize: 13.5,
+                    color: Colors.black87,
+                    height: 1.45,
+                  ),
+                  strong: GoogleFonts.raleway(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  em: GoogleFonts.raleway(
+                    fontSize: 13.5,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.black87,
+                  ),
+                  listBullet: GoogleFonts.raleway(
+                    fontSize: 13.5,
+                    color: Colors.black87,
+                  ),
+                  h3: GoogleFonts.raleway(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
       ),
     );
   }

@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 
 class ChatService {
   final String _apiKey = dotenv.env['GEMINI_KEY']!;
-
-  ChatSession? _chat;
+  final List<Map<String, dynamic>> _history = [];
 
   static const String _systemPrompt = '''
 You are a knowledgeable and friendly recipe nutrition assistant. Your expertise covers:
@@ -36,19 +36,45 @@ If you don't know something with confidence, say so rather than guessing.
 Do not provide medical diagnoses or replace professional dietary advice — recommend consulting a 
 dietitian for medical concerns.
 ''';
-
-  Future<void> init() async {
-    final model = GenerativeModel(
-      model: 'gemini-2.5-flash-lite',
-      apiKey: _apiKey,
-      systemInstruction: Content.system(_systemPrompt),
-    );
-    _chat = model.startChat();
-  }
-
   Future<String> sendMessage(String message) async {
-    if (_chat == null) await init();
-    final response = await _chat!.sendMessage(Content.text(message));
-    return response.text ?? 'Sorry, I could not get a response.';
+    _history.add({
+      "role": "user",
+      "parts": [
+        {"text": message},
+      ],
+    });
+
+    final url = Uri.parse(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_apiKey',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "system_instruction": {
+          "parts": [
+            {"text": _systemPrompt},
+          ],
+        },
+        "contents": _history,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final reply =
+          data['candidates'][0]['content']['parts'][0]['text'] as String;
+      _history.add({
+        "role": "model",
+        "parts": [
+          {"text": reply},
+        ],
+      });
+      return reply;
+    } else {
+      print('Gemini error ${response.statusCode}: ${response.body}');
+      throw Exception('API error: ${response.statusCode}');
+    }
   }
 }
