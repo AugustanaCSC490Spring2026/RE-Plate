@@ -21,9 +21,7 @@ class _HistoryPageState extends State<HistoryPage> {
     List directionsList = [];
     if (recipe['directions'] != null) {
       directionsList = recipe['directions'];
-    } else if (recipe['preparation_steps'] != null) {
-      directionsList = recipe['preparation_steps'];
-    }
+    } 
 
     List ingredientsList = [];
     if (recipe['ingredients'] != null) {
