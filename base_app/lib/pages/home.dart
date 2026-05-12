@@ -9,6 +9,7 @@ import 'package:base_app/pages/favorites.dart';
 import 'package:base_app/pages/history.dart';
 import 'package:base_app/pages/chat_box.dart';
 import 'package:base_app/pages/profile.dart';
+import 'package:base_app/pages/home_recipe.dart';
 
 // credits to @MahdiNazmi for source code
 // github link:
@@ -80,55 +81,54 @@ class _HomeState extends State<Home> {
 
   /// A function to show recipe details in a bottom sheet
   void _showRecipeDetails(Map<String, dynamic> recipe) async {
-      // Show a loading indicator while fetching the full recipe document
+    // Show a loading indicator while fetching the full recipe document
     showDialog(
       context: context,
-          barrierDismissible: false,
+      barrierDismissible: false,
       builder: (context) =>
           const Center(child: CircularProgressIndicator(color: Colors.green)),
     );
 
     try {
-          // Query the 'Recipes' collection using the recipe ID
+      // Query the 'Recipes' collection using the recipe ID
       var doc = await FirebaseFirestore.instance
-        .collection('Recipes')
-        .doc(recipe['id'])
-        .get();
+          .collection('Recipes')
+          .doc(recipe['id'])
+          .get();
 
       // Close the loading indicator
       Navigator.of(context, rootNavigator: true).pop();
 
-    if (doc.exists) {
-      var fullData = doc.data()!;
+      if (doc.exists) {
+        var fullData = doc.data()!;
 
-      /// HELPER: Safely converts a field to a List, even if it is a JSON String
-      List<dynamic> ensureList(dynamic field) {
-        if (field == null) return [];
-        if (field is List) return field;
-        if (field is String) {
-          try {
-            // Decodes the JSON string (e.g., '["item1", "item2"]') into a Dart List
-            return json.decode(field) as List<dynamic>;
-          } catch (e) {
-            // Fallback if it's a plain string rather than a JSON array
-            return [field];
+        /// HELPER: Safely converts a field to a List, even if it is a JSON String
+        List<dynamic> ensureList(dynamic field) {
+          if (field == null) return [];
+          if (field is List) return field;
+          if (field is String) {
+            try {
+              // Decodes the JSON string (e.g., '["item1", "item2"]') into a Dart List
+              return json.decode(field) as List<dynamic>;
+            } catch (e) {
+              // Fallback if it's a plain string rather than a JSON array
+              return [field];
+            }
           }
+          return [];
         }
-        return [];
-      }
 
-      // Parse the ingredients and directions using the helper
-      final ingredients = ensureList(fullData['ingredients']);
-      final directions = ensureList(fullData['directions']);
+        // Parse the ingredients and directions using the helper
+        final ingredients = ensureList(fullData['ingredients']);
+        final directions = ensureList(fullData['directions']);
 
- // Log this view to the user's history
+        // Log this view to the user's history
         _logHistory({
           'id': recipe['id'],
-        'title': fullData['title'],
-        'ingredients': ingredients,
-        'directions': directions,
-      });
-
+          'title': fullData['title'],
+          'ingredients': ingredients,
+          'directions': directions,
+        });
 
         showModalBottomSheet(
           context: context,
@@ -160,14 +160,14 @@ class _HomeState extends State<Home> {
                     ),
                   ),
 
-                 // Header Row with Back Button and Title
+                  // Header Row with Back Button and Title
                   Row(
                     children: [
                       IconButton(
-                       icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Color.fromARGB(255, 195, 88, 17),
-                      ),
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Color.fromARGB(255, 195, 88, 17),
+                        ),
                         onPressed: () => Navigator.pop(context),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -175,11 +175,11 @@ class _HomeState extends State<Home> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                            fullData['recipe_title'] ?? 'Recipe',
+                          fullData['title'] ?? 'Recipe',
                           style: GoogleFonts.raleway(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                                 color: const Color.fromARGB(255, 154, 67, 208),
+                            color: const Color.fromARGB(255, 154, 67, 208),
                           ),
                         ),
                       ),
@@ -187,15 +187,15 @@ class _HomeState extends State<Home> {
                   ),
 
                   // Title
-                  Text(
-                    fullData['title'] ?? 'Recipe',
-                    style: GoogleFonts.raleway(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 154, 67, 208),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  // Text(
+                  //   fullData['title'] ?? 'Recipe',
+                  //   style: GoogleFonts.raleway(
+                  //     fontSize: 22,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: const Color.fromARGB(255, 154, 67, 208),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 20),
 
                   // Ingredients section
                   Text(
@@ -212,11 +212,11 @@ class _HomeState extends State<Home> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                         const Icon(
-                          Icons.fiber_manual_record,
-                          size: 8,
-                          color: Colors.green,
-                        ),
+                          const Icon(
+                            Icons.fiber_manual_record,
+                            size: 8,
+                            color: Colors.green,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -239,34 +239,39 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                     ...directions.asMap().entries.map(
-                        (entry) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: const Color.fromARGB(255, 195, 88, 17),
-                              child: Text(
-                                '${entry.key + 1}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                ),
-                                ),
+                  ...directions.asMap().entries.map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 12,
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              195,
+                              88,
+                              17,
+                            ),
+                            child: Text(
+                              '${entry.key + 1}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  entry.value.toString(),
-                                  style: GoogleFonts.raleway(fontSize: 14),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              entry.value.toString(),
+                              style: GoogleFonts.raleway(fontSize: 14),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -279,23 +284,26 @@ class _HomeState extends State<Home> {
       }
     } catch (e) {
       if (Navigator.canPop(context)) Navigator.pop(context);
-    debugPrint("Error in _showRecipeDetails: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error fetching recipe: $e")),
-    );
+      debugPrint("Error in _showRecipeDetails: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error fetching recipe: $e")));
+    }
   }
-}
 
   // Add this helper method to _HomeState in Home.dart
-Future<List<String>> _getUserRestrictions() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return [];
-  final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-  if (doc.exists) {
-    return List<String>.from(doc.data()?['dietaryRestrictions'] ?? []);
+  Future<List<String>> _getUserRestrictions() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return [];
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    if (doc.exists) {
+      return List<String>.from(doc.data()?['dietaryRestrictions'] ?? []);
+    }
+    return [];
   }
-  return [];
-}
 
   /// Searches Firestore for recipes that contain all the ingredients in the pantry list
   Future<void> _search() async {
@@ -306,36 +314,30 @@ Future<List<String>> _getUserRestrictions() async {
     });
 
     try {
-          List<String> userRestrictions = await _getUserRestrictions();
+      List<String> userRestrictions = await _getUserRestrictions();
       List<Set<String>> recipeSets = [];
 
       for (String ingredient in _pantryList) {
-      // Ensure the ID matches how you stored it in IngredientIndex
+        // Ensure the ID matches how you stored it in IngredientIndex
 
         String formattedName = ingredient.toLowerCase().trim().replaceAll(
           ' ',
           '_',
         );
-       
 
-        
         DocumentSnapshot doc = await FirebaseFirestore.instance
             .collection('IngredientIndex')
             .doc(formattedName)
             .get();
 
         //if (WidgetsApp.debugAllowBannerOverride.exists) {
-              if (doc.exists) {
-
+        if (doc.exists) {
           // Safe casting to handle potential nulls or type mismatches
           var data = doc.data() as Map<String, dynamic>;
 
-          
           List<dynamic> recipes = data['recipes'] ?? [];
           recipeSets.add(recipes.map((recipe) => recipe.toString()).toSet());
         }
-
-
       }
 
       if (recipeSets.isEmpty) {
@@ -343,52 +345,52 @@ Future<List<String>> _getUserRestrictions() async {
         return;
       }
 
-     Set<String> commonTitles = recipeSets.reduce((a, b) => a.intersection(b)); // make a set with matching 2
+      Set<String> commonTitles = recipeSets.reduce(
+        (a, b) => a.intersection(b),
+      ); // make a set with matching 2
 
-    List<Map<String, dynamic>> filteredRecipes = [];
-    
-    for (String title in commonTitles) {
-      // Use the title from the index to find the document in Recipes
-      String recipeId = title.toLowerCase().trim().replaceAll(' ', '_');
-      DocumentSnapshot recipeDoc = await FirebaseFirestore.instance
-          .collection('Recipes')
-          .doc(recipeId)
-          .get();
+      List<Map<String, dynamic>> filteredRecipes = [];
 
-      if (recipeDoc.exists) {
-        Map<String, dynamic> data = recipeDoc.data() as Map<String, dynamic>;
-        bool matchesPreferences = true;
+      for (String title in commonTitles) {
+        // Use the title from the index to find the document in Recipes
+        String recipeId = title.toLowerCase().trim().replaceAll(' ', '_');
+        DocumentSnapshot recipeDoc = await FirebaseFirestore.instance
+            .collection('Recipes')
+            .doc(recipeId)
+            .get();
 
-        for (String restriction in userRestrictions) {
-          // If the DB marks it "False", the user cannot eat it
-          if (data[restriction] == "False") {
-            matchesPreferences = false;
-            break;
+        if (recipeDoc.exists) {
+          Map<String, dynamic> data = recipeDoc.data() as Map<String, dynamic>;
+          bool matchesPreferences = true;
+
+          for (String restriction in userRestrictions) {
+            // If the DB marks it "False", the user cannot eat it
+            if (data[restriction] == "False") {
+              matchesPreferences = false;
+              break;
+            }
+          }
+
+          if (matchesPreferences) {
+            filteredRecipes.add({
+              'id': recipeId,
+              'recipe_title': data['recipe_title'] ?? title,
+              'ingredients': data['ingredients'] ?? [],
+              'directions': data['directions'] ?? [],
+            });
           }
         }
-
-        if (matchesPreferences) {
-          filteredRecipes.add({
-            'id': recipeId,
-            'recipe_title': data['recipe_title'] ?? title,
-            'ingredients': data['ingredients'] ?? [],
-            'directions': data['directions'] ?? [],
-          });
-        }
       }
-    }
 
       setState(() {
-         _foundRecipes = filteredRecipes.take(30).toList();
+        _foundRecipes = filteredRecipes.take(30).toList();
       });
-
     } catch (e) {
-         // Check your Debug Console in VS Code/Android Studio to see the real error
-     debugPrint("Search Error: $e"); 
-      ScaffoldMessenger.of(context).showSnackBar(
-  
-          SnackBar(content: Text("Error fetching recipes: $e")),
-        );
+      // Check your Debug Console in VS Code/Android Studio to see the real error
+      debugPrint("Search Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error fetching recipes: $e")));
     } finally {
       setState(() => _isSearching = false);
     }
@@ -428,7 +430,7 @@ Future<List<String>> _getUserRestrictions() async {
       await favoriteRef.delete();
     } else {
       final recipeDoc = await FirebaseFirestore.instance
-         .collection('Recipes')
+          .collection('Recipes')
           .doc(recipeId)
           .get();
 
@@ -436,14 +438,15 @@ Future<List<String>> _getUserRestrictions() async {
       if (recipeDoc.exists) {
         fullData = recipeDoc.data() ?? {};
       }
-      var recipeTitle =  fullData['title'] ?? recipe['title'] ?? 'Unnamed Recipe';
+      var recipeTitle =
+          fullData['title'] ?? recipe['title'] ?? 'Unnamed Recipe';
       debugPrint(recipeTitle);
       await favoriteRef.set({
         'recipe_title':
             fullData['title'] ?? recipe['title'] ?? 'Unnamed Recipe',
         'id': recipeId,
-        'ingredients' : recipe['ingredients'],
-        'directions' : recipe['directions'],
+        'ingredients': recipe['ingredients'],
+        'directions': recipe['directions'],
         'saved_at': FieldValue.serverTimestamp(),
       });
     }
@@ -465,7 +468,7 @@ Future<List<String>> _getUserRestrictions() async {
         .set({
           'recipe_title': recipe['title'] ?? 'Unnamed Recipe',
           'id': recipeId,
-          'directions' : recipe['directions'],
+          'directions': recipe['directions'],
           'ingredients': recipe['ingredients'],
           'viewed_at': FieldValue.serverTimestamp(),
         });
@@ -739,76 +742,94 @@ Future<List<String>> _getUserRestrictions() async {
               /// Display search results or loading indicator or a prompt to add ingredients
               ///
               Expanded(
-                child: _isSearching
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Color.fromARGB(255, 205, 180, 91),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Search results appear FIRST when searching
+                      if (_isSearching)
+                        const Center(
+                          child: CircularProgressIndicator(
+                            color: Color.fromARGB(255, 205, 180, 91),
+                          ),
+                        )
+                      else if (_foundRecipes.isNotEmpty) ...[
+                        Text(
+                          'Search Results',
+                          style: GoogleFonts.raleway(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 195, 88, 17),
+                          ),
                         ),
-                      )
-                    : _foundRecipes.isEmpty
-                    ? Center(
-                        child: Text(
-                          "Add ingredients to start",
-                          style: GoogleFonts.raleway(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.separated(
-                        itemCount: _foundRecipes.length,
-                        separatorBuilder: (context, index) =>
-                            const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          final recipe = _foundRecipes[index];
-
-                          return FutureBuilder<bool>(
-                            future: _isFavorited(recipe['id']),
-                            builder: (context, snapshot) {
-                              final isFavorited = snapshot.data ?? false;
-
-                              return ListTile(
-                                onTap: () {
-                                  _logHistory(recipe);
-                                  _showRecipeDetails(recipe);
-                                },
-                                leading: const Icon(
-                                  Icons.restaurant_menu,
-                                  color: Colors.green,
-                                ),
-                                title: Text(
-                                  recipe['title'] ??
-                                      recipe['recipe_title'] ??
-                                      "Recipe",
-                                  style: GoogleFonts.raleway(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                        const SizedBox(height: 8),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _foundRecipes.length,
+                          itemBuilder: (context, index) {
+                            final recipe = _foundRecipes[index];
+                            return FutureBuilder<bool>(
+                              future: _isFavorited(recipe['id']),
+                              builder: (context, snapshot) {
+                                final isFavorited = snapshot.data ?? false;
+                                return ListTile(
+                                  onTap: () {
+                                    _logHistory(recipe);
+                                    _showRecipeDetails(recipe);
+                                  },
+                                  leading: const Icon(
+                                    Icons.restaurant_menu,
+                                    color: Colors.green,
                                   ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        isFavorited
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: isFavorited
-                                            ? Colors.red
-                                            : Colors.grey,
+                                  title: Text(
+                                    recipe['title'] ??
+                                        recipe['recipe_title'] ??
+                                        "Recipe",
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          isFavorited
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: isFavorited
+                                              ? Colors.red
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: () =>
+                                            _toggleFavorite(recipe),
                                       ),
-                                      onPressed: () => _toggleFavorite(recipe),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 16,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                              );
-                            },
-                          );
+                                      const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
+                                  contentPadding: EdgeInsets.zero,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      FeaturedRecipesSection(
+                        onRecipeTap: (recipe) {
+                          _showRecipeDetails(recipe);
                         },
                       ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

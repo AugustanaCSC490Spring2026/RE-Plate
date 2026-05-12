@@ -41,6 +41,7 @@ dependencies:
   google_generative_ai: ^0.4.0
   http: ^1.2.0          
   flutter_markdown: ^0.7.6  
+  firebase_storage: ^13.4.0
 
 dependency_overrides:
   js: ^0.7.2
