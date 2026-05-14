@@ -206,7 +206,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  ...(fullData['ingredients'] as List<dynamic>? ?? []).map(
+                  ...ensureList(fullData['ingredients']).map(
                     (ingredient) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Row(
@@ -319,11 +319,7 @@ class _HomeState extends State<Home> {
 
       for (String ingredient in _pantryList) {
         // Ensure the ID matches how you stored it in IngredientIndex
-
-        String formattedName = ingredient.toLowerCase().trim().replaceAll(
-          ' ',
-          '_',
-        );
+        String formattedName = ingredient.toLowerCase().trim().replaceAll(' ', '_');
 
         DocumentSnapshot doc = await FirebaseFirestore.instance
             .collection('IngredientIndex')
@@ -334,7 +330,6 @@ class _HomeState extends State<Home> {
         if (doc.exists) {
           // Safe casting to handle potential nulls or type mismatches
           var data = doc.data() as Map<String, dynamic>;
-
           List<dynamic> recipes = data['recipes'] ?? [];
           recipeSets.add(recipes.map((recipe) => recipe.toString()).toSet());
         }
@@ -346,19 +341,25 @@ class _HomeState extends State<Home> {
       }
 
       Set<String> commonTitles = recipeSets.reduce(
+        
         (a, b) => a.intersection(b),
       ); // make a set with matching 2
-
+      debugPrint("Common titles: $commonTitles");
       List<Map<String, dynamic>> filteredRecipes = [];
 
       for (String title in commonTitles) {
         // Use the title from the index to find the document in Recipes
-        String recipeId = title.toLowerCase().trim().replaceAll(' ', '_');
+        String recipeId = title.toLowerCase().trim()
+        .replaceAll(RegExp(r'''[*"'()]'''), '')
+        .replaceAll(' ', '_');  
+       
+
         DocumentSnapshot recipeDoc = await FirebaseFirestore.instance
             .collection('Recipes')
             .doc(recipeId)
             .get();
-
+             debugPrint("Fetching doc: $recipeId — exists: ${recipeDoc.exists}");
+            
         if (recipeDoc.exists) {
           Map<String, dynamic> data = recipeDoc.data() as Map<String, dynamic>;
           bool matchesPreferences = true;
@@ -374,7 +375,7 @@ class _HomeState extends State<Home> {
           if (matchesPreferences) {
             filteredRecipes.add({
               'id': recipeId,
-              'recipe_title': data['recipe_title'] ?? title,
+              'title': data['title'] ?? data['recipe_title'] ?? title,
               'ingredients': data['ingredients'] ?? [],
               'directions': data['directions'] ?? [],
             });
@@ -466,7 +467,7 @@ class _HomeState extends State<Home> {
         .collection('history')
         .doc(recipeId)
         .set({
-          'recipe_title': recipe['title'] ?? 'Unnamed Recipe',
+          'recipe_title': recipe['title'] ?? recipe['recipe_title'] ?? 'Unnamed Recipe',
           'id': recipeId,
           'directions': recipe['directions'],
           'ingredients': recipe['ingredients'],
