@@ -1,10 +1,9 @@
 // recipe_detail_sheet.dart
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:base_app/pages/recipe_detail_page.dart';
+
 
 class RecipeDetailPage extends StatelessWidget {
   final Map<String, dynamic> recipe;
