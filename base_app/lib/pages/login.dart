@@ -160,7 +160,7 @@ class Login extends StatelessWidget {
             ),
           ),
           onSubmitted: (_) async {
-            await AuthService().signin(
+            await AuthService().signIn(
               emailOrUsername: _emailController.text,
               password: _passwordController.text,
               context: context,
@@ -212,7 +212,7 @@ class Login extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
-        await AuthService().signin(
+        await AuthService().signIn(
           emailOrUsername: _emailController.text,
           password: _passwordController.text,
           context: context,
