@@ -4,12 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:base_app/pages/recipe_detail_page.dart';
 
-class RecipeDetailSheet extends StatelessWidget {
+class RecipeDetailPage extends StatelessWidget {
   final Map<String, dynamic> recipe;
   final Future<void> Function(Map<String, dynamic>)? onLogHistory;
 
-  const RecipeDetailSheet({
+  const RecipeDetailPage({
     super.key,
     required this.recipe,
     this.onLogHistory,
@@ -62,7 +63,7 @@ class RecipeDetailSheet extends StatelessWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
-        builder: (_) => RecipeDetailSheet(recipe: fullRecipe),
+        builder: (_) => RecipeDetailPage(recipe: fullRecipe),
       );
     } catch (e) {
       if (Navigator.canPop(context)) Navigator.pop(context);

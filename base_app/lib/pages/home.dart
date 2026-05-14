@@ -553,7 +553,7 @@ Future<List<String>> _getUserRestrictions() async {
                               builder: (context, snapshot) {
                                 final isFavorited = snapshot.data ?? false;
                                 return ListTile(
-                                 onTap: () => RecipeDetailSheet.show(
+                                 onTap: () => RecipeDetailPage.show(
                                   context,
                                   recipe,
                                   onLogHistory: _logHistory,
@@ -602,7 +602,7 @@ Future<List<String>> _getUserRestrictions() async {
                         const SizedBox(height: 24),
                       ],
                      FeaturedRecipesSection(
-                      onRecipeTap: (recipe) => RecipeDetailSheet.show(
+                      onRecipeTap: (recipe) => RecipeDetailPage.show(
                       context,
                       recipe,
                       onLogHistory: _logHistory,
