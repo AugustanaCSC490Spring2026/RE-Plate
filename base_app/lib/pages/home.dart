@@ -315,6 +315,7 @@ class _HomeState extends State<Home> {
 
     try {
       List<String> userRestrictions = await _getUserRestrictions();
+
       List<Set<String>> recipeSets = [];
 
       for (String ingredient in _pantryList) {
@@ -375,7 +376,7 @@ class _HomeState extends State<Home> {
           if (matchesPreferences) {
             filteredRecipes.add({
               'id': recipeId,
-              'title': data['title'] ?? data['recipe_title'] ?? title,
+              'title': data['title'],
               'ingredients': data['ingredients'] ?? [],
               'directions': data['directions'] ?? [],
             });
