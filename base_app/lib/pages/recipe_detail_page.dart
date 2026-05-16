@@ -455,7 +455,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     label: Text(
                       _isSearching
                           ? "Searching..."
-                          : "Find recipes with ${_have.values.where((v) => v).length} ingredients",
+                          : "Search again",
                       style: GoogleFonts.raleway(
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),
@@ -586,17 +586,6 @@ class _RecipeResultsSheet extends StatelessWidget {
                 color: const Color.fromARGB(255, 154, 67, 208),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              "Using: ${usedIngredients.join(', ')}",
-              style: GoogleFonts.raleway(
-                fontSize: 12,
-                color: Colors.grey[500],
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
- 
             const SizedBox(height: 12),
             const Divider(),
  
