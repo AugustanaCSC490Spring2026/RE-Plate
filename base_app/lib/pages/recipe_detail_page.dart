@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:collection/collection.dart';
 
-
+// transferred over the ShowRecipeDetail method from all the other pages to avoid WET code
 class RecipeDetailPage extends StatefulWidget {
   @override
   State<RecipeDetailPage> createState() => _RecipeDetailPageState();
@@ -81,9 +81,6 @@ class RecipeDetailPage extends StatefulWidget {
   }
 }
   
-  
-
-
   /// Safely converts a field to a List, even if it's a JSON string
   static List<dynamic> _ensureList(dynamic field) {
     if (field == null) return [];
@@ -117,7 +114,6 @@ class RecipeDetailPage extends StatefulWidget {
         child: ListView(
           controller: scrollController,
           children: [
-            // Drag handle
             Center(
               child: Container(
                 width: 40,
@@ -129,8 +125,6 @@ class RecipeDetailPage extends StatefulWidget {
                 ),
               ),
             ),
-
-            // Header row
             Row(
               children: [
                 IconButton(
@@ -153,10 +147,7 @@ class RecipeDetailPage extends StatefulWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
-            // Ingredients
             Text('Ingredients',
                 style: GoogleFonts.raleway(
                     fontSize: 18, fontWeight: FontWeight.bold)),
@@ -178,10 +169,7 @@ class RecipeDetailPage extends StatefulWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Directions
             Text('Directions',
                 style: GoogleFonts.raleway(
                     fontSize: 18, fontWeight: FontWeight.bold)),
@@ -223,20 +211,20 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   bool _isSearching = false;
 
   @override
-  @override
 void initState() {
   super.initState();
   final cleanIngredients = RecipeDetailPage._ensureList(
     widget.recipe['clean_ingredients'],
   ).map((e) => e.toString()).toList();
 
-  _have = {
-    for (final ing in cleanIngredients)
-      // pre-cross-off anything excluded from a previous search
-      ing: !widget.excludedIngredients.any(
-        (ex) => ex.toLowerCase() == ing.toLowerCase(),
-      ),
-  };
+  // Key by clean ingredient, one entry per ingredient
+  _have = {};
+  for (int i = 0; i < cleanIngredients.length; i++) {
+    final cleanIng = cleanIngredients[i];
+    _have[cleanIng] = !widget.excludedIngredients.any(
+      (ex) => ex.toLowerCase() == cleanIng.toLowerCase(),
+    );
+  }
 }
 
   String _toIndexKey(String ingredient) =>
@@ -284,8 +272,7 @@ void initState() {
 
     final currentTitle = widget.recipe['title'] ?? '';
 
-    // Fetch IngredientIndex docs for ALL excluded ingredients
-    // so we can filter out any recipe that contains them
+    // Fetch IngredientIndex docs for ALL excluded ingredients so we can filter out any recipe that contains them
     final Set<String> recipesContainingExcluded = {};
     for (final excluded in nowExcluded) {
       final doc = await FirebaseFirestore.instance
@@ -364,8 +351,6 @@ void initState() {
                 ),
               ),
             ),
-
-            // Header row
             Row(
               children: [
                 IconButton(
@@ -390,14 +375,12 @@ void initState() {
             ),
 
             const SizedBox(height: 16),
-
-            // ── Ingredients ──────────────────────────────────────
             Text('Ingredients',
                 style: GoogleFonts.raleway(
                     fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-
             // Only show the checkbox UI when we have clean_ingredients to map against
+            /// makes it easier to search
             if (cleanIngredients.isNotEmpty) ...[
               Text(
                 "Tap an ingredient to cross off what you don't have.",
@@ -405,12 +388,17 @@ void initState() {
                     fontSize: 12, color: Colors.grey[500]),
               ),
               const SizedBox(height: 8),
-              ...List.generate(cleanIngredients.length, (i) {
-  final cleanIng = cleanIngredients[i];
-  // full measured ingredient at same index, fallback to clean if missing
-  final displayIng = i < ingredients.length
-      ? ingredients[i].toString()
-      : cleanIng;
+              // Show full measured ingredients as the display list
+// Use clean_ingredients only for checkbox state keys
+...List.generate(ingredients.length, (i) {
+  final displayIng = ingredients[i].toString();
+  
+  // Find the matching clean ingredient by index if available,
+  // otherwise fall back to the display ingredient itself
+  final cleanIng = i < cleanIngredients.length
+      ? cleanIngredients[i]
+      : displayIng;
+  
   final haveIt = _have[cleanIng] ?? true;
 
   return InkWell(
@@ -438,7 +426,7 @@ void initState() {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              displayIng, // <-- shows "1 cup chicken broth" etc.
+              displayIng,
               style: GoogleFonts.raleway(
                 fontSize: 14,
                 color: haveIt ? Colors.black87 : Colors.grey[400],
@@ -468,7 +456,6 @@ void initState() {
 }),
 
               const SizedBox(height: 12),
-
               // "Find recipes" button — only shows if something is crossed off
               if (_have.values.any((v) => !v))
                 SizedBox(
@@ -499,6 +486,7 @@ void initState() {
                   ),
                 ),
             ] else ...[
+              ///Claude helped me with the fallback
               // Fallback: plain bullet list when no clean_ingredients field
               ...ingredients.map(
                 (ingredient) => Padding(
@@ -520,8 +508,6 @@ void initState() {
             ],
 
             const SizedBox(height: 20),
-
-            // ── Directions ───────────────────────────────────────
             Text('Directions',
                 style: GoogleFonts.raleway(
                     fontSize: 18, fontWeight: FontWeight.bold)),
@@ -558,7 +544,7 @@ void initState() {
 // ---------------------------------------------------------------------------
 // Results sheet — shows recipe titles that matched the ingredient intersection
 // ---------------------------------------------------------------------------
- 
+ /// Majority of this code was heavily edited by Claude
 class _RecipeResultsSheet extends StatelessWidget {
   final List<String> recipeTitles;
   final List<String> usedIngredients;
