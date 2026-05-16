@@ -245,7 +245,7 @@ Future<void> _search() async {
       }
 
     setState(() {
-      final int MAX_RECIPES_TO_DISPLAY = 30;
+      final int MAX_RECIPES_TO_DISPLAY = 50;
       _foundRecipes = filteredRecipes.take(MAX_RECIPES_TO_DISPLAY).toList();
     });
   } catch (e) {
