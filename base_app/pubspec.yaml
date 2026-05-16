@@ -42,6 +42,7 @@ dependencies:
   http: ^1.2.0          
   flutter_markdown: ^0.7.6  
   firebase_storage: ^13.4.0
+  collection: ^1.18.0    #score index_add on
 
 dependency_overrides:
   js: ^0.7.2
