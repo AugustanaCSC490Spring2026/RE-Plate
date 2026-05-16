@@ -10,71 +10,76 @@ class RecipeDetailPage extends StatefulWidget {
   State<RecipeDetailPage> createState() => _RecipeDetailPageState();
   final Map<String, dynamic> recipe;
   final Future<void> Function(Map<String, dynamic>)? onLogHistory;
+   final Set<String> excludedIngredients; 
 
   const RecipeDetailPage({
     super.key,
     required this.recipe,
     this.onLogHistory,
+    this.excludedIngredients = const {},
   });
 
   /// Call this static method from anywhere to show the bottom sheet
   static Future<void> show(
-    BuildContext context,
-    Map<String, dynamic> recipe, {
-    Future<void> Function(Map<String, dynamic>)? onLogHistory,
-  }) async {
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) =>
-          const Center(child: CircularProgressIndicator(color: Colors.green)),
-    );
+  BuildContext context,
+  Map<String, dynamic> recipe, {
+  Future<void> Function(Map<String, dynamic>)? onLogHistory,
+  Set<String> excludedIngredients = const {}, // ADD THIS
+}) async {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) =>
+        const Center(child: CircularProgressIndicator(color: Colors.green)),
+  );
 
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('Recipes')
-          .doc(recipe['id'])
-          .get();
+  try {
+    final doc = await FirebaseFirestore.instance
+        .collection('Recipes')
+        .doc(recipe['id'])
+        .get();
 
-      Navigator.of(context, rootNavigator: true).pop(); // dismiss loader
+    Navigator.of(context, rootNavigator: true).pop();
 
-      if (!doc.exists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Recipe details not found.")),
-        );
-        return;
-      }
-
-      final fullData = doc.data()!;
-      final ingredients = _ensureList(fullData['ingredients']);
-      final directions = _ensureList(fullData['directions']);
-
-      final fullRecipe = {
-  'id': recipe['id'],
-  'title': fullData['title'],
-  'ingredients': ingredients,
-  'directions': directions,
-  'clean_ingredients': _ensureList(fullData['clean_ingredients']), // ADD THIS
-};
-
-      // Log history if callback provided
-      await onLogHistory?.call(fullRecipe);
-
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => RecipeDetailPage(recipe: fullRecipe),
-      );
-    } catch (e) {
-      if (Navigator.canPop(context)) Navigator.pop(context);
-      debugPrint("Error in RecipeDetailSheet.show: $e");
+    if (!doc.exists) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error fetching recipe: $e")),
+        const SnackBar(content: Text("Recipe details not found.")),
       );
+      return;
     }
+
+    final fullData = doc.data()!;
+    final ingredients = _ensureList(fullData['ingredients']);
+    final directions = _ensureList(fullData['directions']);
+
+    final fullRecipe = {
+      'id': recipe['id'],
+      'title': fullData['title'],
+      'ingredients': ingredients,
+      'directions': directions,
+      'clean_ingredients': _ensureList(fullData['clean_ingredients']),
+    };
+
+    await onLogHistory?.call(fullRecipe);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => RecipeDetailPage(
+        recipe: fullRecipe,
+        onLogHistory: onLogHistory,
+        excludedIngredients: excludedIngredients,
+      ),
+    );
+  } catch (e) {
+    if (Navigator.canPop(context)) Navigator.pop(context);
+    debugPrint("Error in RecipeDetailSheet.show: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error fetching recipe: $e")),
+    );
   }
+}
   
   
 
@@ -218,22 +223,34 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   bool _isSearching = false;
 
   @override
-  void initState() {
-    super.initState();
-    final cleanIngredients = RecipeDetailPage._ensureList(
-      widget.recipe['clean_ingredients'],
-    ).map((e) => e.toString()).toList();
-    _have = {for (final ing in cleanIngredients) ing: true};
-  }
+  @override
+void initState() {
+  super.initState();
+  final cleanIngredients = RecipeDetailPage._ensureList(
+    widget.recipe['clean_ingredients'],
+  ).map((e) => e.toString()).toList();
+
+  _have = {
+    for (final ing in cleanIngredients)
+      // pre-cross-off anything excluded from a previous search
+      ing: !widget.excludedIngredients.any(
+        (ex) => ex.toLowerCase() == ing.toLowerCase(),
+      ),
+  };
+}
 
   String _toIndexKey(String ingredient) =>
       ingredient.trim().toLowerCase().replaceAll(' ', '_');
 
-  Future<void> _searchWithAvailable() async {
-  final available = _have.entries
-      .where((e) => e.value)
+ Future<void> _searchWithAvailable() async {
+  final available = _have.entries.where((e) => e.value).map((e) => e.key).toList();
+
+  // Combine previously excluded + newly crossed off
+  final nowExcluded = _have.entries
+      .where((e) => !e.value)
       .map((e) => e.key)
-      .toList();
+      .toSet()
+    ..addAll(widget.excludedIngredients);
 
   if (available.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -245,8 +262,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   setState(() => _isSearching = true);
 
   try {
-    // Fetch recipe sets for each available ingredient in parallel
-    // (same pattern as your home page fetchRecipeSetsFromIngredientIndexInParallel)
     final List<Future<Set<String>?>> fetchTasks = available.map((ing) async {
       final doc = await FirebaseFirestore.instance
           .collection('IngredientIndex')
@@ -260,23 +275,37 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     final results = await Future.wait(fetchTasks);
     final recipeSets = results.whereType<Set<String>>().toList();
 
-    // Score recipes by how many available ingredients they match
-    // (same scoring logic as your home page _search)
     final Map<String, int> recipeScores = {};
     for (final recipeSet in recipeSets) {
       for (final recipeTitle in recipeSet) {
         recipeScores[recipeTitle] = (recipeScores[recipeTitle] ?? 0) + 1;
       }
     }
-    final currentTitle = widget.recipe['title'] ?? '';
-    // Sort by score descending, same as home page and not show the current recipe
-    final rankedTitles = recipeScores.entries
-    .sorted((a, b) => b.value.compareTo(a.value))
-    .map((e) => e.key)
-    .where((title) => title.toLowerCase() != currentTitle.toLowerCase()) // ADD THIS
-    .take(30)
-    .toList();
 
+    final currentTitle = widget.recipe['title'] ?? '';
+
+    // Fetch IngredientIndex docs for ALL excluded ingredients
+    // so we can filter out any recipe that contains them
+    final Set<String> recipesContainingExcluded = {};
+    for (final excluded in nowExcluded) {
+      final doc = await FirebaseFirestore.instance
+          .collection('IngredientIndex')
+          .doc(_toIndexKey(excluded))
+          .get();
+      if (doc.exists) {
+        final recipes = List<String>.from(doc.data()?['recipes'] ?? []);
+        recipesContainingExcluded.addAll(recipes);
+      }
+    }
+
+    final rankedTitles = recipeScores.entries
+        .sorted((a, b) => b.value.compareTo(a.value))
+        .map((e) => e.key)
+        .where((title) =>
+            title.toLowerCase() != currentTitle.toLowerCase() &&
+            !recipesContainingExcluded.contains(title)) // FILTER OUT excluded
+        .take(30)
+        .toList();
 
     if (!mounted) return;
     Navigator.pop(context);
@@ -288,6 +317,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       builder: (_) => _RecipeResultsSheet(
         recipeTitles: rankedTitles,
         usedIngredients: available,
+        excludedIngredients: nowExcluded, // pass accumulated set forward
       ),
     );
   } catch (e) {
@@ -532,10 +562,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 class _RecipeResultsSheet extends StatelessWidget {
   final List<String> recipeTitles;
   final List<String> usedIngredients;
+  final Set<String> excludedIngredients;
  
   const _RecipeResultsSheet({
     required this.recipeTitles,
     required this.usedIngredients,
+    required this.excludedIngredients,
   });
   String recipeIdFromTitle(String title) {
   return title.toLowerCase().trim()
@@ -575,17 +607,28 @@ class _RecipeResultsSheet extends StatelessWidget {
                 ),
               ),
             ),
- 
-            Text(
-              recipeTitles.isEmpty
-                  ? "No matches found"
-                  : "Recipes Found",
-              style: GoogleFonts.raleway(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 154, 67, 208),
-              ),
+                Row(
+            children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios,
+                color: Color.fromARGB(255, 195, 88, 17)),
+            onPressed: () => Navigator.of(context).popUntil(
+              (route) => route.isFirst,
             ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            recipeTitles.isEmpty ? "No matches found" : "Recipes Found",
+            style: GoogleFonts.raleway(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 154, 67, 208),
+            ),
+          ),
+        ],
+      ),
             const SizedBox(height: 12),
             const Divider(),
  
@@ -642,14 +685,14 @@ class _RecipeResultsSheet extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      // Optional: tap to open the recipe detail
                       onTap: () {
-  final recipeId = recipeIdFromTitle(title);
-  RecipeDetailPage.show(
-    context,
-    {'id': recipeId, 'title': _formatTitle(title)},
-  );
-},
+                        final recipeId = recipeIdFromTitle(title);
+                        RecipeDetailPage.show(
+                        context,
+                        {'id': recipeId, 'title': _formatTitle(title)},
+                        excludedIngredients: excludedIngredients,
+                      );
+                    },
                     );
                   },
                 ),
