@@ -71,6 +71,7 @@ flutter:
 
   assets:
     - .env
+    - lib/assets/images/replateLogo.png
     - lib/assets/images/replateLogo1.png
     
   # An image asset can refer to one or more resolution-specific "variants", see
