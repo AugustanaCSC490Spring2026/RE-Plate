@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:collection/collection.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 // transferred over the ShowRecipeDetail method from all the other pages to avoid WET code
 class RecipeDetailPage extends StatefulWidget {
   @override
@@ -223,9 +223,11 @@ class RecipeDetailPage extends StatefulWidget {
   }
 }
 
+
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   late Map<String, bool> _have;
   bool _isSearching = false;
+  bool _isAddingToGrocery = false;
 
   @override
   void initState() {
@@ -337,8 +339,55 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       if (mounted) setState(() => _isSearching = false);
     }
   }
+  Future<void> _addMissingToGroceryList() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-  @override
+    final missing = _have.entries.where((e) => !e.value).map((e) => e.key).toList();
+    if (missing.isEmpty) return;
+
+    setState(() => _isAddingToGrocery = true);
+    try {
+      final groceryRef = FirebaseFirestore.instance
+          .collection('users').doc(user.uid).collection('groceryList');
+
+      final existing = await groceryRef.get();
+      final existingNames = existing.docs
+          .map((d) => (d['name'] as String).toLowerCase().trim()).toSet();
+
+      int added = 0;
+      for (final ingredient in missing) {
+        if (!existingNames.contains(ingredient.toLowerCase().trim())) {
+          await groceryRef.add({
+            'name': ingredient,
+            'checked': false,
+            'added_at': FieldValue.serverTimestamp(),
+          });
+          added++;
+        }
+      }
+
+      final skipped = missing.length - added;
+      final msg = added == 0
+          ? 'All missing items already in grocery list.'
+          : skipped > 0
+              ? '$added added ($skipped already in list).'
+              : '$added item${added > 1 ? 's' : ''} added to grocery list!';
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(msg, style: GoogleFonts.raleway()),
+          backgroundColor: const Color.fromARGB(255, 159, 77, 207),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ));
+      }
+    } finally {
+      if (mounted) setState(() => _isAddingToGrocery = false);
+    }
+  }
+
+@override
   Widget build(BuildContext context) {
     final ingredients = RecipeDetailPage._ensureList(
       widget.recipe['ingredients'],
@@ -495,7 +544,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               }),
 
               const SizedBox(height: 12),
-              if (_have.values.any((v) => !v))
+              if (_have.values.any((v) => !v)) ...[
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
@@ -530,6 +579,44 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isAddingToGrocery ? null : _addMissingToGroceryList,
+                    icon: _isAddingToGrocery
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(
+                            Icons.add_shopping_cart,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                    label: Text(
+                      _isAddingToGrocery
+                          ? "Adding..."
+                          : "Add missing to grocery list",
+                      style: GoogleFonts.raleway(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 159, 77, 207),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
             ] else ...[
               ...ingredients.map(
                 (ingredient) => Padding(
@@ -598,7 +685,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     );
   }
 }
-
 // ---------------------------------------------------------------------------
 // Results sheet — shows recipe titles that matched the ingredient intersection
 // ---------------------------------------------------------------------------
