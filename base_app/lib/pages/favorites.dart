@@ -8,6 +8,7 @@ import 'package:base_app/pages/history.dart';
 import 'package:base_app/pages/chat_box.dart';
 import 'package:base_app/pages/profile.dart';
 import 'package:base_app/pages/recipe_detail_page.dart';
+
 import 'package:base_app/pages/grocery_list.dart';
 
 class FavoritesPage extends StatefulWidget {

@@ -11,7 +11,6 @@ class Login extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   static const Color background = Color.fromARGB(255, 222, 209, 182);
-  static const Color maroon = Color(0xFF670E10);
   static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
   static const Color sage = Color.fromARGB(255, 126, 153, 120);
   static const Color inputFill = Color.fromARGB(255, 247, 245, 241);
@@ -41,7 +40,7 @@ class Login extends StatelessWidget {
                     'Welcome to RE-Plate!',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.raleway(
-                      color: maroon,
+                      color: softMaroon,
                       fontWeight: FontWeight.w800,
                       fontSize: 44,
                       letterSpacing: 0.2,

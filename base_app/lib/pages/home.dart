@@ -16,6 +16,10 @@ import 'package:collection/collection.dart';
 // github link:
 
 class Home extends StatefulWidget {
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+  static const Color inputFill = Color.fromARGB(255, 247, 245, 241);
   const Home({super.key});
 
   @override
@@ -82,6 +86,23 @@ class _HomeState extends State<Home> {
 
   String _ingredientNameToDocId(String ingredient) {
     return ingredient.toLowerCase().trim().replaceAll(' ', '_');
+  }
+
+  Widget _drawerTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: const Color.fromARGB(255, 117, 52, 61)),
+      title: Text(
+        label,
+        style: GoogleFonts.raleway(
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
+      onTap: onTap,
+    );
   }
 
   // Thanks to Gemini for parallelizing the fetch requests for each ingredient,
@@ -373,28 +394,22 @@ class _HomeState extends State<Home> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 218, 122),
+      backgroundColor: const Color.fromARGB(255, 222, 209, 182),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 245, 218, 122),
+        backgroundColor: const Color.fromARGB(255, 222, 209, 182),
         elevation: 0,
-        title: Text(
-          'Lets RE-Plate!',
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Color.fromARGB(255, 195, 88, 17),
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-            ),
-          ),
-        ),
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 236, 110, 31),
-        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 117, 52, 61)),
+        title: Image.asset('lib/assets/images/replateLogo1.png', height: 100),
       ),
-      // I used CLaude AI assistance to learn about scafolding and putting things into
-      // the sidebar
+      // --- DRAWER ---
       drawer: Drawer(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(
+          255,
+          247,
+          245,
+          241,
+        ), // ← inputFill
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -402,8 +417,8 @@ class _HomeState extends State<Home> {
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color.fromARGB(255, 245, 218, 122),
-                    Color.fromARGB(255, 226, 195, 110),
+                    Color.fromARGB(255, 117, 52, 61), // ← maroon
+                    Color.fromARGB(255, 145, 70, 80),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -415,13 +430,17 @@ class _HomeState extends State<Home> {
                   textStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: Colors.white,
                   ),
                 ),
               ),
               accountEmail: Text(
                 user?.email ?? '',
                 style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontSize: 13),
+                  textStyle: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
               currentAccountPicture: CircleAvatar(
@@ -430,7 +449,7 @@ class _HomeState extends State<Home> {
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Color.fromARGB(255, 111, 87, 192),
+                      color: Color.fromARGB(255, 117, 52, 61),
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),
@@ -438,104 +457,55 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(
-                Icons.home_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
-              ),
-              title: Text(
-                'Home',
-                style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
+            _drawerTile(
+              icon: Icons.home_outlined,
+              label: 'Home',
               onTap: () => Navigator.pop(context),
             ),
-            ListTile(
-              leading: const Icon(
-                Icons.favorite_outline_rounded,
-                color: Color.fromARGB(255, 120, 69, 182),
-              ),
-              title: Text(
-                'My Plates',
-                style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
+            _drawerTile(
+              icon: Icons.favorite_outline_rounded,
+              label: 'My Plates',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const FavoritesPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const FavoritesPage()),
                 );
               },
             ),
-
-            ListTile(
-              leading: const Icon(
-                Icons.history_outlined,
-                color: Color.fromARGB(255, 130, 72, 183),
-              ),
-              title: Text(
-                'History',
-                style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
+            _drawerTile(
+              icon: Icons.history_outlined,
+              label: 'History',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HistoryPage()),
+                  MaterialPageRoute(builder: (_) => const HistoryPage()),
                 );
               },
             ),
-
-            ListTile(
-              leading: const Icon(
-                Icons.shopping_cart_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
-              ),
-              title: Text(
-                'Grocery List',
-                style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-
+            _drawerTile(
+              icon: Icons.shopping_cart_outlined,
+              label: 'Grocery List',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const GroceryListPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const GroceryListPage()),
                 );
               },
             ),
-
-            ListTile(
-              leading: const Icon(
-                Icons.person_outline,
-                color: Color.fromARGB(255, 97, 57, 163),
-              ),
-              title: Text(
-                'My Profile',
-                style: GoogleFonts.raleway(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
+            _drawerTile(
+              icon: Icons.person_outline,
+              label: 'My Profile',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                  MaterialPageRoute(builder: (_) => const ProfilePage()),
                 );
               },
             ),
-
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
@@ -556,6 +526,8 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+
+      // --- BODY ---
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -565,108 +537,165 @@ class _HomeState extends State<Home> {
               Text(
                 _getGreeting(user?.displayName ?? 'Chef'),
                 style: GoogleFonts.raleway(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey,
+                  color: Home.sage,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Text(
-                'Pantry Search',
+                "What's in your pantry?",
                 style: GoogleFonts.raleway(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 195, 88, 17),
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: const Color.fromARGB(255, 117, 52, 61),
                 ),
               ),
 
-              // search the input field for adding ingredients to the pantry list, with an add button and submit on enter functionality
+              const SizedBox(height: 16),
+
+              // --- INPUT FIELD ---
               TextField(
                 controller: _controller,
                 onSubmitted: (_) => _addIngredient(),
+                style: GoogleFonts.raleway(
+                  color: Colors.black87,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
                 decoration: InputDecoration(
-                  hintText: "Add ingredient...",
+                  hintText: 'Add ingredient...',
+                  hintStyle: GoogleFonts.raleway(
+                    color: const Color(0xff9A9A9A),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Color.fromARGB(255, 126, 153, 120), // sage
+                  ),
                   suffixIcon: IconButton(
                     icon: const Icon(
                       Icons.add_circle,
-                      color: Color.fromARGB(255, 159, 77, 207),
+                      color: Color.fromARGB(255, 126, 153, 120),
                     ),
                     onPressed: _addIngredient,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+                  fillColor: const Color.fromARGB(255, 247, 245, 241),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 16,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: const BorderSide(
+                      color: Color(0xffEFE7DD),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 126, 153, 120),
+                      width: 1.6,
+                    ),
                   ),
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              /// Display the list of added ingredients as chips with delete functionality
+              // --- INGREDIENT CHIPS ---
               Wrap(
                 spacing: 8.0,
+                runSpacing: 4.0,
                 children: [
                   for (int i = 0; i < _pantryList.length; i++)
                     InputChip(
-                      label: Text(_pantryList[i], style: GoogleFonts.raleway()),
+                      label: Text(
+                        _pantryList[i],
+                        style: GoogleFonts.raleway(
+                          color: const Color.fromARGB(255, 117, 52, 61),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
                       onDeleted: () => _removeIngredient(i),
-                      deleteIconColor: Colors.redAccent,
-                      backgroundColor: Colors.green[50],
+                      deleteIconColor: const Color.fromARGB(255, 117, 52, 61),
+                      backgroundColor: const Color.fromARGB(255, 247, 245, 241),
+                      side: const BorderSide(color: Color(0xffEFE7DD)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                 ],
               ),
 
-              /// if there are ingredients in the pantry list, show the "Search Recipes" button and "Clear All" option
+              // --- SEARCH BUTTON ---
               if (_pantryList.isNotEmpty) ...[
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: _clearAll,
-                    child: const Text(
-                      "Clear All",
-                      style: TextStyle(color: Colors.redAccent),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => _search(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 245, 218, 122),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: _clearAll,
+                      child: Text(
+                        'Clear All',
+                        style: GoogleFonts.raleway(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      "Search Recipes",
-                      style: GoogleFonts.raleway(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(
+                      width: 160,
+                      height: 40,
+                      child: ElevatedButton.icon(
+                        onPressed: _search,
+                        icon: const Icon(
+                          Icons.search,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          'Search',
+                          style: GoogleFonts.raleway(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            126,
+                            153,
+                            120,
+                          ),
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
 
-              /// Display search results or loading indicator or a prompt to add ingredients
-              ///
+              // --- RESULTS ---
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Search results appear FIRST when searching
                       if (_isSearching)
                         const Center(
                           child: CircularProgressIndicator(
-                            color: Color.fromARGB(255, 205, 180, 91),
+                            color: Color.fromARGB(255, 126, 153, 120),
                           ),
                         )
                       else if (_foundRecipes.isNotEmpty) ...[
@@ -675,7 +704,7 @@ class _HomeState extends State<Home> {
                           style: GoogleFonts.raleway(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 195, 88, 17),
+                            color: const Color.fromARGB(255, 117, 52, 61),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -697,18 +726,24 @@ class _HomeState extends State<Home> {
                                   ),
                                   leading: const Icon(
                                     Icons.restaurant_menu,
-                                    color: Colors.green,
+                                    color: Color.fromARGB(255, 126, 153, 120),
                                   ),
                                   title: Text(
                                     (recipe['title'] ??
                                             recipe['recipe_title'] ??
-                                            "Recipe") +
-                                        " (${recipe['num_pantry_ingredients_used']} ingredients)",
+                                            'Recipe') +
+                                        ' (${recipe['num_pantry_ingredients_used']} ingredients)',
                                     style: GoogleFonts.raleway(
-                                      fontSize: 16,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w600,
+                                      color: const Color.fromARGB(
+                                        255,
+                                        117,
+                                        52,
+                                        61,
+                                      ),
                                     ),
-                                  ),
+                                  ), // ← closes Text()
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -731,8 +766,7 @@ class _HomeState extends State<Home> {
                                       ),
                                     ],
                                   ),
-                                  contentPadding: EdgeInsets.zero,
-                                );
+                                ); // ← closes ListTile()
                               },
                             );
                           },
@@ -754,13 +788,15 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+
+      // --- FAB ---
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 209, 138, 37),
+        backgroundColor: const Color.fromARGB(255, 126, 153, 120), // sage
         child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
         onPressed: () => showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 247, 245, 241),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
@@ -769,4 +805,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-} /*  */
+}
