@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/pages/home.dart';
 import 'package:base_app/pages/history.dart';
 import 'package:base_app/pages/favorites.dart';
-import 'package:base_app/pages/profile.dart';
+import 'package:base_app/pages/grocery_list.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -69,18 +69,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
     setState(() => _isSaving = true);
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .set({
-          'dietaryRestrictions': _selectedRestrictions.toList(),
-        }, SetOptions(merge: true));
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'dietaryRestrictions': _selectedRestrictions.toList(),
+    }, SetOptions(merge: true));
 
     setState(() => _isSaving = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Dietary preferences saved!")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Dietary preferences saved!")));
   }
 
   @override
@@ -90,14 +87,17 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 245, 218, 122),
       drawer: Drawer(
-        backgroundColor:Color.fromARGB(255, 248, 247, 245),
+        backgroundColor: Color.fromARGB(255, 248, 247, 245),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [ Color.fromARGB(255, 245, 218, 122), Color.fromARGB(255, 226, 195, 110)],
+                  colors: [
+                    Color.fromARGB(255, 245, 218, 122),
+                    Color.fromARGB(255, 226, 195, 110),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -132,25 +132,30 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home_outlined, color:  Color.fromARGB(255, 109, 83, 194)),
+              leading: const Icon(
+                Icons.home_outlined,
+                color: Color.fromARGB(255, 109, 83, 194),
+              ),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-             onTap: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Home()), // replace HomePage with your actual class name
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Home(),
+                  ), // replace HomePage with your actual class name
                 );
               },
             ),
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color:  Color.fromARGB(255, 120, 69, 182),
+                color: Color.fromARGB(255, 120, 69, 182),
               ),
               title: Text(
                 'My Plates',
@@ -170,7 +175,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
 
             ListTile(
-              leading: const Icon(Icons.history_outlined, color:  Color.fromARGB(255, 130, 72, 183)),
+              leading: const Icon(
+                Icons.history_outlined,
+                color: Color.fromARGB(255, 130, 72, 183),
+              ),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -185,9 +193,34 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(
+                Icons.shopping_cart_outlined,
+                color: Color.fromARGB(255, 109, 83, 194),
+              ),
+              title: Text(
+                'Grocery List',
+                style: GoogleFonts.raleway(
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GroceryListPage(),
+                  ),
+                );
+              },
+            ),
 
             ListTile(
-              leading: const Icon(Icons.person_outline, color:  Color.fromARGB(255, 97, 57, 163)),
+              leading: const Icon(
+                Icons.person_outline,
+                color: Color.fromARGB(255, 97, 57, 163),
+              ),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -228,17 +261,23 @@ class _ProfilePageState extends State<ProfilePage> {
           "My Profile",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color:  Color.fromARGB(255, 236, 110, 31),
+              color: Color.fromARGB(255, 236, 110, 31),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         backgroundColor: Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
-        iconTheme: const IconThemeData(color:  Color.fromARGB(255, 236, 110, 31)),
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(255, 236, 110, 31),
+        ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color:  Color.fromARGB(255, 236, 110, 31)))
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color.fromARGB(255, 236, 110, 31),
+              ),
+            )
           : Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -249,9 +288,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor: const Color.fromARGB(255, 237, 242, 237),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          237,
+                          242,
+                          237,
+                        ),
                         child: Text(
-                          user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                          user?.displayName?.substring(0, 1).toUpperCase() ??
+                              'U',
                           style: GoogleFonts.raleway(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -309,12 +354,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         spacing: 10,
                         runSpacing: 10,
                         children: _allRestrictions.map((restriction) {
-                          final isSelected = _selectedRestrictions.contains(restriction);
+                          final isSelected = _selectedRestrictions.contains(
+                            restriction,
+                          );
                           return FilterChip(
                             label: Text(
                               restriction,
                               style: GoogleFonts.raleway(
-                                color: isSelected ? Colors.white : Color.fromARGB(255, 236, 110, 31),
+                                color: isSelected
+                                    ? Colors.white
+                                    : Color.fromARGB(255, 236, 110, 31),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -329,11 +378,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               });
                             },
                             backgroundColor: Color.fromARGB(255, 245, 218, 122),
-                            selectedColor:  Color.fromARGB(255, 236, 110, 31),
+                            selectedColor: Color.fromARGB(255, 236, 110, 31),
                             checkmarkColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color:  Color.fromARGB(255, 236, 110, 31)),
+                              side: BorderSide(
+                                color: Color.fromARGB(255, 236, 110, 31),
+                              ),
                             ),
                           );
                         }).toList(),
@@ -350,7 +401,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: ElevatedButton(
                       onPressed: _isSaving ? null : _saveRestrictions,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:  Color.fromARGB(255, 236, 110, 31),
+                        backgroundColor: Color.fromARGB(255, 236, 110, 31),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

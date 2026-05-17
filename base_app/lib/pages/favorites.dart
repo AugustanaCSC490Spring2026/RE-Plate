@@ -8,6 +8,7 @@ import 'package:base_app/pages/history.dart';
 import 'package:base_app/pages/chat_box.dart';
 import 'package:base_app/pages/profile.dart';
 import 'package:base_app/pages/recipe_detail_page.dart';
+import 'package:base_app/pages/grocery_list.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -17,8 +18,6 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  
-
   Future<void> _removeFavorite(String recipeId) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -36,13 +35,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text("No user signed in")),
-      );
+      return const Scaffold(body: Center(child: Text("No user signed in")));
     }
 
     return Scaffold(
-      backgroundColor:Color.fromARGB(255, 245, 218, 122),
+      backgroundColor: Color.fromARGB(255, 245, 218, 122),
       drawer: Drawer(
         backgroundColor: Color.fromARGB(255, 243, 242, 240),
         child: ListView(
@@ -51,7 +48,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [ Color.fromARGB(255, 245, 218, 122), Color.fromARGB(255, 226, 195, 110)],
+                  colors: [
+                    Color.fromARGB(255, 245, 218, 122),
+                    Color.fromARGB(255, 226, 195, 110),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -86,25 +86,30 @@ class _FavoritesPageState extends State<FavoritesPage> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home_outlined, color:  Color.fromARGB(255, 109, 83, 194)),
+              leading: const Icon(
+                Icons.home_outlined,
+                color: Color.fromARGB(255, 109, 83, 194),
+              ),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-             onTap: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Home()), // replace HomePage with your actual class name
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Home(),
+                  ), // replace HomePage with your actual class name
                 );
               },
             ),
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color:  Color.fromARGB(255, 120, 69, 182),
+                color: Color.fromARGB(255, 120, 69, 182),
               ),
               title: Text(
                 'My Plates',
@@ -124,7 +129,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ),
 
             ListTile(
-              leading: const Icon(Icons.history_outlined, color:  Color.fromARGB(255, 130, 72, 183)),
+              leading: const Icon(
+                Icons.history_outlined,
+                color: Color.fromARGB(255, 130, 72, 183),
+              ),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -139,9 +147,34 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(
+                Icons.shopping_cart_outlined,
+                color: Color.fromARGB(255, 109, 83, 194),
+              ),
+              title: Text(
+                'Grocery List',
+                style: GoogleFonts.raleway(
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GroceryListPage(),
+                  ),
+                );
+              },
+            ),
 
             ListTile(
-              leading: const Icon(Icons.person_outline, color:  Color.fromARGB(255, 97, 57, 163)),
+              leading: const Icon(
+                Icons.person_outline,
+                color: Color.fromARGB(255, 97, 57, 163),
+              ),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -182,14 +215,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
           "My Plates",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color:  Color.fromARGB(255, 236, 110, 31),
+              color: Color.fromARGB(255, 236, 110, 31),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         backgroundColor: Color.fromARGB(255, 245, 218, 122),
         elevation: 0,
-        iconTheme: const IconThemeData(color:  Color.fromARGB(255, 236, 110, 31)),
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(255, 236, 110, 31),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -201,7 +236,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Color.fromARGB(255, 236, 110, 31)),
+              child: CircularProgressIndicator(
+                color: Color.fromARGB(255, 236, 110, 31),
+              ),
             );
           }
 
@@ -209,7 +246,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
             return Center(
               child: Text(
                 "No favorite recipes yet",
-                style: GoogleFonts.raleway(color:  Color.fromARGB(255, 236, 110, 31)),
+                style: GoogleFonts.raleway(
+                  color: Color.fromARGB(255, 236, 110, 31),
+                ),
               ),
             );
           }
@@ -221,12 +260,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
             itemCount: favoriteDocs.length,
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
-              final recipe =
-                  favoriteDocs[index].data() as Map<String, dynamic>;
+              final recipe = favoriteDocs[index].data() as Map<String, dynamic>;
 
               return ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.restaurant_menu, color: Color.fromARGB(255, 236, 110, 31)),
+                leading: const Icon(
+                  Icons.restaurant_menu,
+                  color: Color.fromARGB(255, 236, 110, 31),
+                ),
                 title: Text(
                   recipe['recipe_title'] ?? 'Unnamed Recipe',
                   style: GoogleFonts.raleway(
@@ -238,10 +279,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   icon: const Icon(Icons.favorite, color: Colors.red),
                   onPressed: () => _removeFavorite(recipe['id']),
                 ),
-                  onTap: () => RecipeDetailPage.show(
-                  context,
-                  recipe,
-                ),
+                onTap: () => RecipeDetailPage.show(context, recipe),
               );
             },
           );

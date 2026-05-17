@@ -11,7 +11,7 @@ import 'package:base_app/pages/chat_box.dart';
 import 'package:base_app/pages/profile.dart';
 import 'package:base_app/pages/home_recipe.dart';
 import 'package:base_app/pages/recipe_detail_page.dart';
-import 'package:collection/collection.dart'; 
+import 'package:collection/collection.dart';
 // credits to @MahdiNazmi for source code
 // github link:
 
@@ -33,7 +33,6 @@ class _HomeState extends State<Home> {
   List<Map<String, dynamic>> _foundRecipes = [];
   bool _isSearching = false;
 
-  
   /// Adds a new ingredient to the pantry list if it's not empty and not already present
   void _addIngredient() {
     String input = _controller.text.trim();
@@ -81,149 +80,166 @@ class _HomeState extends State<Home> {
     });
   }
 
-String _ingredientNameToDocId(String ingredient) {
-  return ingredient.toLowerCase().trim().replaceAll(' ', '_');
-}
+  String _ingredientNameToDocId(String ingredient) {
+    return ingredient.toLowerCase().trim().replaceAll(' ', '_');
+  }
 
-// Thanks to Gemini for parallelizing the fetch requests for each ingredient, 
-// which significantly improved performance by allowing multiple Firestore reads to happen simultaneously instead of sequentially. This is especially beneficial when the pantry list contains many ingredients, as it reduces the overall waiting time for all recipe sets to be retrieved.
-/// Fetches recipe sets for all ingredients in the pantry list in parallel.
-Future<List<Set<String>>> fetchRecipeSetsFromIngredientIndexInParallel(List<String> pantryList) async {
-  // Create a list of Futures. Note that we do NOT use 'await' inside the map.
-  // This starts all the asynchronous operations immediately.
-  final List<Future<Set<String>?>> fetchTasks = pantryList.map((ingredient) async {
-    try {
-      // Logic for formatting the document ID
-      final String ingredientID = _ingredientNameToDocId(ingredient);
+  // Thanks to Gemini for parallelizing the fetch requests for each ingredient,
+  // which significantly improved performance by allowing multiple Firestore reads to happen simultaneously instead of sequentially. This is especially beneficial when the pantry list contains many ingredients, as it reduces the overall waiting time for all recipe sets to be retrieved.
+  /// Fetches recipe sets for all ingredients in the pantry list in parallel.
+  Future<List<Set<String>>> fetchRecipeSetsFromIngredientIndexInParallel(
+    List<String> pantryList,
+  ) async {
+    // Create a list of Futures. Note that we do NOT use 'await' inside the map.
+    // This starts all the asynchronous operations immediately.
+    final List<Future<Set<String>?>> fetchTasks = pantryList.map((
+      ingredient,
+    ) async {
+      try {
+        // Logic for formatting the document ID
+        final String ingredientID = _ingredientNameToDocId(ingredient);
 
-      // Initiating the Firestore request
-      final DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('IngredientIndex')
-          .doc(ingredientID)
+        // Initiating the Firestore request
+        final DocumentSnapshot doc = await FirebaseFirestore.instance
+            .collection('IngredientIndex')
+            .doc(ingredientID)
+            .get();
+
+        if (doc.exists && doc.data() != null) {
+          final data = doc.data() as Map<String, dynamic>;
+          final List<dynamic> recipes = data['recipes'] ?? [];
+
+          // Convert the dynamic list to a Set of Strings
+          return recipes.map((recipe) => recipe.toString()).toSet();
+        }
+      } catch (e) {
+        // Error handling for individual requests
+        print('Error fetching ingredient $ingredient: $e');
+      }
+
+      // Return null or an empty set if the document doesn't exist or fails
+      return null;
+    }).toList();
+
+    // Future.wait executes all futures in the list in parallel and waits for all to complete.
+    final List<Set<String>?> results = await Future.wait(fetchTasks);
+
+    // Remove null results (where docs didn't exist) and return the final list
+    return results.whereType<Set<String>>().toList();
+  }
+
+  String recipeIdFromTitle(String title) {
+    return title
+        .toLowerCase()
+        .trim()
+        .replaceAll(RegExp(r'''[*"'()]'''), '')
+        .replaceAll(' ', '_');
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchFullRecipesInParallel(
+    List<String> recipeIds,
+  ) async {
+    // 2. Split the list of IDs into chunks of 30
+    List<List<String>> chunks = [];
+    const int chunkSize = 30;
+
+    for (int i = 0; i < recipeIds.length; i += chunkSize) {
+      int end = (i + chunkSize < recipeIds.length)
+          ? i + chunkSize
+          : recipeIds.length;
+      chunks.add(recipeIds.sublist(i, end));
+    }
+
+    // 3. Create a list of Futures to fetch all chunks in parallel
+    List<Future<QuerySnapshot<Map<String, dynamic>>>> futures = chunks.map((
+      chunk,
+    ) {
+      debugPrint("Fetching chunk of recipes: $chunk");
+
+      return FirebaseFirestore.instance
+          .collection('Recipes')
+          .where(FieldPath.documentId, whereIn: chunk)
           .get();
+    }).toList();
 
-      if (doc.exists && doc.data() != null) {
-        final data = doc.data() as Map<String, dynamic>;
-        final List<dynamic> recipes = data['recipes'] ?? [];
-        
-        // Convert the dynamic list to a Set of Strings
-        return recipes.map((recipe) => recipe.toString()).toSet();
-      }
-    } catch (e) {
-      // Error handling for individual requests
-      print('Error fetching ingredient $ingredient: $e');
-    }
-    
-    // Return null or an empty set if the document doesn't exist or fails
-    return null;
-  }).toList();
+    // 4. Execute all queries concurrently
+    List<QuerySnapshot<Map<String, dynamic>>> snapshots = await Future.wait(
+      futures,
+    );
 
-  // Future.wait executes all futures in the list in parallel and waits for all to complete.
-  final List<Set<String>?> results = await Future.wait(fetchTasks);
+    // 5. Flatten the list of snapshots into a single list of document snapshots
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> unorderedDocs = snapshots
+        .expand((snapshot) => snapshot.docs)
+        .toList();
 
-  // Remove null results (where docs didn't exist) and return the final list
-  return results.whereType<Set<String>>().toList();
-}
+    // 6. Crucial: Restore the original order so it matches the order of the recipe titles that came in
+    // Create a map for O(1) lookups of the fetched documents
+    Map<String, QueryDocumentSnapshot<Map<String, dynamic>>> docMap = {
+      for (var doc in unorderedDocs) doc.id: doc,
+    };
 
-String recipeIdFromTitle(String title) {
-  return title.toLowerCase().trim()
-          .replaceAll(RegExp(r'''[*"'()]'''), '')
-          .replaceAll(' ', '_');
-}
-
-Future<List<Map<String, dynamic>>> _fetchFullRecipesInParallel(List<String> recipeIds) async { 
-
-  // 2. Split the list of IDs into chunks of 30
-  List<List<String>> chunks = [];
-  const int chunkSize = 30;
-
-  for (int i = 0; i < recipeIds.length; i += chunkSize) {
-    int end = (i + chunkSize < recipeIds.length) ? i + chunkSize : recipeIds.length;
-    chunks.add(recipeIds.sublist(i, end));
-  }
-
-  // 3. Create a list of Futures to fetch all chunks in parallel
-  List<Future<QuerySnapshot<Map<String, dynamic>>>> futures = chunks.map((chunk) {
-    debugPrint("Fetching chunk of recipes: $chunk");
-
-    return FirebaseFirestore.instance
-        .collection('Recipes')
-        .where(FieldPath.documentId, whereIn: chunk)
-        .get();
-  }).toList();
-
-  // 4. Execute all queries concurrently
-  List<QuerySnapshot<Map<String, dynamic>>> snapshots = await Future.wait(futures);
-
-  // 5. Flatten the list of snapshots into a single list of document snapshots
-  List<QueryDocumentSnapshot<Map<String, dynamic>>> unorderedDocs = snapshots
-      .expand((snapshot) => snapshot.docs)
-      .toList();
-
-  // 6. Crucial: Restore the original order so it matches the order of the recipe titles that came in
-  // Create a map for O(1) lookups of the fetched documents
-  Map<String, QueryDocumentSnapshot<Map<String, dynamic>>> docMap = {
-    for (var doc in unorderedDocs) doc.id: doc
-  };
-
-  // Rebuild the list matching the original rankedRecipeIds order
-  List<Map<String, dynamic>> rankedRecipes = [];
-  for (String id in recipeIds) {
-    if (docMap.containsKey(id)) {
-      if (docMap[id]!.exists) {
-        //debugPrint("Recipe exists: ${docMap[id]!.id}");
-        rankedRecipes.add(docMap[id]!.data());
-      } else {
-        debugPrint("Document with ID $id does not exist.");
+    // Rebuild the list matching the original rankedRecipeIds order
+    List<Map<String, dynamic>> rankedRecipes = [];
+    for (String id in recipeIds) {
+      if (docMap.containsKey(id)) {
+        if (docMap[id]!.exists) {
+          //debugPrint("Recipe exists: ${docMap[id]!.id}");
+          rankedRecipes.add(docMap[id]!.data());
+        } else {
+          debugPrint("Document with ID $id does not exist.");
+        }
       }
     }
+    return rankedRecipes;
   }
-  return rankedRecipes;
-}
 
-Future<void> _search() async {
-  if (_pantryList.isEmpty) return;
-  setState(() {
-    _isSearching = true;
-    _foundRecipes = [];
-  });
+  Future<void> _search() async {
+    if (_pantryList.isEmpty) return;
+    setState(() {
+      _isSearching = true;
+      _foundRecipes = [];
+    });
 
-  try {
-    List<String> userRestrictions = await _getUserRestrictions();
-    List<Set<String>> recipeSets = await fetchRecipeSetsFromIngredientIndexInParallel(_pantryList);
+    try {
+      List<String> userRestrictions = await _getUserRestrictions();
+      List<Set<String>> recipeSets =
+          await fetchRecipeSetsFromIngredientIndexInParallel(_pantryList);
 
-    if (recipeSets.isEmpty) {
-  setState(() => _foundRecipes = []);
-  return;
-}
+      if (recipeSets.isEmpty) {
+        setState(() => _foundRecipes = []);
+        return;
+      }
 
-// Scoring — replaces intersection
-    Map<String, int> recipeScores = {}; //map
-  for (Set<String> setOfRecipesThatIncludeSomeIngredient in recipeSets) {
-      for (String recipeTitle in setOfRecipesThatIncludeSomeIngredient) {
+      // Scoring — replaces intersection
+      Map<String, int> recipeScores = {}; //map
+      for (Set<String> setOfRecipesThatIncludeSomeIngredient in recipeSets) {
+        for (String recipeTitle in setOfRecipesThatIncludeSomeIngredient) {
           recipeScores[recipeTitle] = (recipeScores[recipeTitle] ?? 0) + 1;
-    }
-  }
+        }
+      }
 
-    List<String> rankedRecipeIds = recipeScores.entries
-    .sorted((a, b) => b.value.compareTo(a.value))
-    .map((e) => recipeIdFromTitle(e.key))
-    .toList();
+      List<String> rankedRecipeIds = recipeScores.entries
+          .sorted((a, b) => b.value.compareTo(a.value))
+          .map((e) => recipeIdFromTitle(e.key))
+          .toList();
 
-   // truncate list if it's too large
-   final int MAX_RECIPES_TO_FETCH_FOR_ONE_QUERY = 180;
-   if (rankedRecipeIds.length > MAX_RECIPES_TO_FETCH_FOR_ONE_QUERY) {
-     rankedRecipeIds = rankedRecipeIds.sublist(0, MAX_RECIPES_TO_FETCH_FOR_ONE_QUERY);
-   }
+      // truncate list if it's too large
+      final int MAX_RECIPES_TO_FETCH_FOR_ONE_QUERY = 180;
+      if (rankedRecipeIds.length > MAX_RECIPES_TO_FETCH_FOR_ONE_QUERY) {
+        rankedRecipeIds = rankedRecipeIds.sublist(
+          0,
+          MAX_RECIPES_TO_FETCH_FOR_ONE_QUERY,
+        );
+      }
 
- debugPrint("Ranked recipes: ${rankedRecipeIds.length}");
+      debugPrint("Ranked recipes: ${rankedRecipeIds.length}");
 
-  List<Map<String, dynamic>> rankedRecipes = await _fetchFullRecipesInParallel(rankedRecipeIds);
+      List<Map<String, dynamic>> rankedRecipes =
+          await _fetchFullRecipesInParallel(rankedRecipeIds);
 
-  List<Map<String, dynamic>> filteredRecipes = [];
+      List<Map<String, dynamic>> filteredRecipes = [];
 
-  for (Map<String, dynamic> recipeData in rankedRecipes) {
-      
+      for (Map<String, dynamic> recipeData in rankedRecipes) {
         bool matchesPreferences = true;
 
         for (String restriction in userRestrictions) {
@@ -239,37 +255,38 @@ Future<void> _search() async {
             'title': recipeData['title'] ?? recipeData['recipe_title'],
             'ingredients': recipeData['ingredients'] ?? [],
             'directions': recipeData['directions'] ?? [],
-            'num_pantry_ingredients_used' : recipeScores[recipeData['title']] ?? -1,
+            'num_pantry_ingredients_used':
+                recipeScores[recipeData['title']] ?? -1,
           });
         }
       }
 
-    setState(() {
-      final int MAX_RECIPES_TO_DISPLAY = 50;
-      _foundRecipes = filteredRecipes.take(MAX_RECIPES_TO_DISPLAY).toList();
-    });
-  } catch (e) {
-    debugPrint("Search Error: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error fetching recipes: $e")),
-    );
-  } finally {
-    setState(() => _isSearching = false);
+      setState(() {
+        final int MAX_RECIPES_TO_DISPLAY = 50;
+        _foundRecipes = filteredRecipes.take(MAX_RECIPES_TO_DISPLAY).toList();
+      });
+    } catch (e) {
+      debugPrint("Search Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error fetching recipes: $e")));
+    } finally {
+      setState(() => _isSearching = false);
+    }
   }
-}
-Future<List<String>> _getUserRestrictions() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return [];
-  final doc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .get();
-  if (doc.exists) {
-    return List<String>.from(doc.data()?['dietaryRestrictions'] ?? []);
-  }
-  return [];
-}
 
+  Future<List<String>> _getUserRestrictions() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return [];
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    if (doc.exists) {
+      return List<String>.from(doc.data()?['dietaryRestrictions'] ?? []);
+    }
+    return [];
+  }
 
   /// Check if a recipe is already favorited by the current user
   Future<bool> _isFavorited(String recipeId) async {
@@ -341,7 +358,8 @@ Future<List<String>> _getUserRestrictions() async {
         .collection('history')
         .doc(recipeId)
         .set({
-          'recipe_title': recipe['title'] ?? recipe['recipe_title'] ?? 'Unnamed Recipe',
+          'recipe_title':
+              recipe['title'] ?? recipe['recipe_title'] ?? 'Unnamed Recipe',
           'id': recipeId,
           'directions': recipe['directions'],
           'ingredients': recipe['ingredients'],
@@ -474,29 +492,30 @@ Future<List<String>> _getUserRestrictions() async {
                 );
               },
             ),
-           
-            ListTile(
-          leading: const Icon(
-          Icons.shopping_cart_outlined,
-          color: Color.fromARGB(255, 109, 83, 194),
-          ),
-        title: Text(
-        'Grocery List',
-        style: GoogleFonts.raleway(
-        textStyle: const TextStyle(fontWeight: FontWeight.w600),
-       ),
-          ),
- 
-         onTap: () {
-        Navigator.pop(context);
-        Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const GroceryListPage()),
-    );
-  },
 
-  ),
-          
+            ListTile(
+              leading: const Icon(
+                Icons.shopping_cart_outlined,
+                color: Color.fromARGB(255, 109, 83, 194),
+              ),
+              title: Text(
+                'Grocery List',
+                style: GoogleFonts.raleway(
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GroceryListPage(),
+                  ),
+                );
+              },
+            ),
+
             ListTile(
               leading: const Icon(
                 Icons.person_outline,
@@ -560,8 +579,6 @@ Future<List<String>> _getUserRestrictions() async {
                   color: Color.fromARGB(255, 195, 88, 17),
                 ),
               ),
-
-              
 
               // search the input field for adding ingredients to the pantry list, with an add button and submit on enter functionality
               TextField(
@@ -673,19 +690,20 @@ Future<List<String>> _getUserRestrictions() async {
                               builder: (context, snapshot) {
                                 final isFavorited = snapshot.data ?? false;
                                 return ListTile(
-                                 onTap: () => RecipeDetailPage.show(
-                                  context,
-                                  recipe,
-                                  onLogHistory: _logHistory,
-                                ),
+                                  onTap: () => RecipeDetailPage.show(
+                                    context,
+                                    recipe,
+                                    onLogHistory: _logHistory,
+                                  ),
                                   leading: const Icon(
                                     Icons.restaurant_menu,
                                     color: Colors.green,
                                   ),
                                   title: Text(
                                     (recipe['title'] ??
-                                        recipe['recipe_title'] ??
-                                        "Recipe") + " (${recipe['num_pantry_ingredients_used']} ingredients)",
+                                            recipe['recipe_title'] ??
+                                            "Recipe") +
+                                        " (${recipe['num_pantry_ingredients_used']} ingredients)",
                                     style: GoogleFonts.raleway(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -721,12 +739,12 @@ Future<List<String>> _getUserRestrictions() async {
                         ),
                         const SizedBox(height: 24),
                       ],
-                     FeaturedRecipesSection(
-                      onRecipeTap: (recipe) => RecipeDetailPage.show(
-                      context,
-                      recipe,
-                      onLogHistory: _logHistory,
-                       ),
+                      FeaturedRecipesSection(
+                        onRecipeTap: (recipe) => RecipeDetailPage.show(
+                          context,
+                          recipe,
+                          onLogHistory: _logHistory,
+                        ),
                       ),
                     ],
                   ),

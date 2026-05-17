@@ -14,7 +14,6 @@ class FeaturedRecipesSection extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('Recipes')
           .where('featured', isEqualTo: true)
-          .limit(6)
           .snapshots(),
 
       builder: (context, snapshot) {
