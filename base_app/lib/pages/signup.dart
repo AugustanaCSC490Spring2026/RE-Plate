@@ -9,6 +9,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Signup extends StatelessWidget {
   Signup({super.key});
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color maroon = Color(0xFF670E10);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+  static const Color inputFill = Color.fromARGB(255, 247, 245, 241);
+  static const Color inputBorder = Color(0xffEFE7DD);
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -16,20 +23,23 @@ class Signup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 218, 122),
+      backgroundColor: background,
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _signin(context),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 245, 218, 122),
+        backgroundColor:background,
         elevation: 0,
         toolbarHeight: 80,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+  child: Center(
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
               const SizedBox(height: 12),
 
               Center(
@@ -40,22 +50,23 @@ class Signup extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
-                          color:  Color.fromARGB(255, 236, 110, 31),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 34,
+                          color: softMaroon,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 40,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       /*  */
-                      'Cook smarter with what you already have',
+                      'Cook smarter with what you already have!',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
-                          color: Color(0xff8A8A8A),
+                          color: softMaroon,
                           fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                          fontSize: 17,
                         ),
                       ),
                     ),
@@ -70,14 +81,19 @@ class Signup extends StatelessWidget {
               const SizedBox(height: 24),
               _password(context),
               const SizedBox(height: 36),
-              _signup(context),
+                            _signup(context),
               const SizedBox(height: 16),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+
+      ),
+ );
+    
+}
+
 
   Widget _username() {
     return Column(
@@ -89,7 +105,7 @@ class Signup extends StatelessWidget {
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
               color: Colors.black87,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
           ),
@@ -105,9 +121,9 @@ class Signup extends StatelessWidget {
             ),
           ),
           decoration: InputDecoration(
-            prefixIcon: const Icon(
+            prefixIcon:  Icon(
               Icons.person_outline_rounded,
-              color: Color(0xff8A8A8A),
+              color: softMaroon,
             ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 20,
@@ -161,9 +177,9 @@ class Signup extends StatelessWidget {
             ),
           ),
           decoration: InputDecoration(
-            prefixIcon: const Icon(
+            prefixIcon:  Icon(
               Icons.email_outlined,
-              color: Color(0xff8A8A8A),
+              color: softMaroon,
             ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 20,
@@ -217,9 +233,9 @@ class Signup extends StatelessWidget {
             ),
           ),
           decoration: InputDecoration(
-            prefixIcon: const Icon(
+            prefixIcon:  Icon(
               Icons.lock_outline_rounded,
-              color: Color(0xff8A8A8A),
+              color:softMaroon,
             ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 20,
@@ -249,7 +265,7 @@ class Signup extends StatelessWidget {
   Widget _signup(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromARGB(255, 245, 218, 122),
+        backgroundColor: sage,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         minimumSize: const Size(double.infinity, 62),
@@ -266,11 +282,11 @@ class Signup extends StatelessWidget {
       child: Text(
         "Sign Up",
         style: GoogleFonts.raleway(
-          textStyle: const TextStyle(
-            color: Color.fromARGB(255, 66, 24, 164),
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          color: Colors.white,
+          fontSize: 17,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.3,
+      
         ),
       ),
     );
@@ -294,7 +310,7 @@ class Signup extends StatelessWidget {
             TextSpan(
               text: "Log In",
               style: const TextStyle(
-                color: Color.fromARGB(255, 62, 15, 138),
+                color: maroon,
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),
