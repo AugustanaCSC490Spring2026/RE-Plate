@@ -3,8 +3,6 @@ import 'package:base_app/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-// credits to @MahdiNazmi for source code
-// github link:
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -12,62 +10,74 @@ class Login extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color maroon = Color(0xFF670E10);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+  static const Color inputFill = Color.fromARGB(255, 247, 245, 241);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 218, 122),
+      backgroundColor: background,
       resizeToAvoidBottomInset: true,
-      bottomNavigationBar: _signup(context),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 245, 218, 122),
-        elevation: 0,
-        toolbarHeight: 90,
-      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'Welcome to RE-Plate!',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                          color: Color.fromARGB(255, 190, 92, 223),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 34,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'lib/assets/images/replateLogo1.png',
+                    height: 250,
+                  ),
+
+                  const SizedBox(height: 0),
+
+                  Text(
+                    'Welcome to RE-Plate!',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.raleway(
+                      color: maroon,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 44,
+                      letterSpacing: 0.2,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Sign in to Start Cooking',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                          color: Color(0xff8A8A8A),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    'Sign in to Start Cooking',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.raleway(
+                      color: softMaroon,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 17,
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 48),
+
+                  _emailAddress(),
+
+                  const SizedBox(height: 22),
+
+                  _password(context),
+
+                  const SizedBox(height: 32),
+
+                  _signin(context),
+
+                  const SizedBox(height: 28),
+
+                  _signup(context),
+                ],
               ),
-              const SizedBox(height: 56),
-              _emailAddress(),
-              const SizedBox(height: 24),
-              _password(context),
-              const SizedBox(height: 36),
-              _signin(context),
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
         ),
       ),
@@ -78,57 +88,12 @@ class Login extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Username or Email',
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        TextField(
+        _label('Username or Email'),
+        const SizedBox(height: 10),
+        _inputField(
           controller: _emailController,
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          decoration: InputDecoration(
-            prefixIcon: const Icon(
-              Icons.person_outline_rounded,
-              color: Color(0xff8A8A8A),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 20,
-              horizontal: 16,
-            ),
-            filled: true,
-            hintText: 'Enter your username or email',
-            hintStyle: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                color: Color(0xff9A9A9A),
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-            fillColor: const Color(0xffF7F7F9),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(color: Color(0xffEEEEEE), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 186, 104, 224),
-                width: 1.2,
-              ),
-            ),
-          ),
+          hintText: 'Enter your username or email',
+          icon: Icons.person_outline_rounded,
         ),
       ],
     );
@@ -138,27 +103,13 @@ class Login extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Password',
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        TextField(
-          obscureText: true,
+        _label('Password'),
+        const SizedBox(height: 10),
+        _inputField(
           controller: _passwordController,
-          style: GoogleFonts.raleway(
-            textStyle: const TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          hintText: 'Enter your password',
+          icon: Icons.lock_outline_rounded,
+          obscureText: true,
           onSubmitted: (_) async {
             await AuthService().signIn(
               emailOrUsername: _emailController.text,
@@ -166,49 +117,74 @@ class Login extends StatelessWidget {
               context: context,
             );
           },
-          decoration: InputDecoration(
-            prefixIcon: const Icon(
-              Icons.lock_outline_rounded,
-              color: Color(0xff8A8A8A),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 20,
-              horizontal: 16,
-            ),
-            filled: true,
-            hintText: 'Enter your password',
-            hintStyle: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                color: Color(0xff9A9A9A),
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-            fillColor: const Color(0xffF7F7F9),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(color: Color(0xffEEEEEE), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 197, 101, 219),
-                width: 1.2,
-              ),
-            ),
-          ),
         ),
       ],
+    );
+  }
+
+  Widget _label(String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: GoogleFonts.raleway(
+          color: Colors.black87,
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
+
+  Widget _inputField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    bool obscureText = false,
+    Function(String)? onSubmitted,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      onSubmitted: onSubmitted,
+      style: GoogleFonts.raleway(
+        color: Colors.black87,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+      ),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: softMaroon),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 16,
+        ),
+        filled: true,
+        fillColor: inputFill,
+        hintText: hintText,
+        hintStyle: GoogleFonts.raleway(
+          color: const Color(0xff9A9A9A),
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xffEFE7DD), width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: sage, width: 1.6),
+        ),
+      ),
     );
   }
 
   Widget _signin(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromARGB(255, 236, 158, 42),
+        backgroundColor: sage,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        minimumSize: const Size(double.infinity, 62),
+        minimumSize: const Size(double.infinity, 60),
         elevation: 0,
       ),
       onPressed: () async {
@@ -221,50 +197,45 @@ class Login extends StatelessWidget {
       child: Text(
         "Sign In",
         style: GoogleFonts.raleway(
-          textStyle: const TextStyle(
-            color: Color.fromARGB(255, 225, 131, 222),
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.3,
-          ),
+          color: Colors.white,
+          fontSize: 17,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.3,
         ),
       ),
     );
   }
 
   Widget _signup(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 28, left: 16, right: 16, top: 8),
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          style: GoogleFonts.raleway(),
-          children: [
-            const TextSpan(
-              text: "New User? ",
-              style: TextStyle(
-                color: Color(0xff8A8A8A),
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: GoogleFonts.raleway(),
+        children: [
+          const TextSpan(
+            text: "New User? ",
+            style: TextStyle(
+              color: softMaroon,
+              fontWeight: FontWeight.w500,
+              fontSize: 17,
             ),
-            TextSpan(
-              text: "Create Account",
-              style: const TextStyle(
-                color: Color.fromARGB(255, 163, 46, 206),
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Signup()),
-                  );
-                },
+          ),
+          TextSpan(
+            text: "Create Account",
+            style: const TextStyle(
+              color: sage,
+              fontWeight: FontWeight.w800,
+              fontSize: 17,
             ),
-          ],
-        ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Signup()),
+                );
+              },
+          ),
+        ],
       ),
     );
   }
