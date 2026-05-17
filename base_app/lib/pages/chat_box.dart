@@ -1,3 +1,4 @@
+import 'package:base_app/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:base_app/services/chat_service.dart';
@@ -24,11 +25,10 @@ class _ChatBoxState extends State<ChatBox> {
   bool _isLoading = false;
 
   static const List<String> _suggestions = [
-    'What is a substitute for milk? 🥛',
-    'Is lamb meat halal? 🥩',
-    'What are high-protein breakfast ideas? 🍳',
-    'Is olive oil healthier than butter? 🫒',
-    'How do I make a recipe gluten-free? 🌾',
+    'What are the nutritional facts for a recipe? 🥗',
+    'Ask me about ingredient substitutions! 🔄',
+    'What foods are high in protein? 💪',
+    'How do I make a recipe vegan? 🌱',
     'What foods are high in iron?',
   ];
 
@@ -103,8 +103,9 @@ class _ChatBoxState extends State<ChatBox> {
           Text(
             'FoodieAI',
             style: GoogleFonts.raleway(
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
+              color: Login.softMaroon,
             ),
           ),
           const Divider(),
@@ -126,17 +127,17 @@ class _ChatBoxState extends State<ChatBox> {
                           'Ask me about nutrition,\nsubstitutions, or any recipe!',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.raleway(
-                            color: Colors.grey,
-                            fontSize: 14,
+                            color: Login.softMaroon,
+                            fontSize: 18,
                           ),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'Try asking:',
                           style: GoogleFonts.raleway(
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade500,
+                            color: Login.softMaroon,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -153,20 +154,17 @@ class _ChatBoxState extends State<ChatBox> {
                                   vertical: 9,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary.withOpacity(
-                                    0.08,
-                                  ),
+                                  color: Login.background.withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: theme.colorScheme.primary
-                                        .withOpacity(0.25),
+                                    color: Login.softMaroon.withOpacity(0.25),
                                   ),
                                 ),
                                 child: Text(
                                   s,
                                   style: GoogleFonts.raleway(
                                     fontSize: 12.5,
-                                    color: theme.colorScheme.primary,
+                                    color: Login.softMaroon,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -202,7 +200,7 @@ class _ChatBoxState extends State<ChatBox> {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: theme.colorScheme.primary,
+                      color: Login.softMaroon,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -254,7 +252,7 @@ class _ChatBoxState extends State<ChatBox> {
                   onPressed: _isLoading ? null : _sendMessage,
                   icon: const Icon(Icons.send_rounded, size: 20),
                   style: IconButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
+                    backgroundColor: Login.sage,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(10),
                   ),
@@ -286,7 +284,7 @@ class _ChatBubble extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width * 0.72,
         ),
         decoration: BoxDecoration(
-          color: isUser ? theme.colorScheme.primary : Colors.grey.shade200,
+          color: isUser ? Login.sage : Colors.grey.shade200,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(18),
             topRight: const Radius.circular(18),

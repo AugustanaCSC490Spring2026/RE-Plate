@@ -1,3 +1,4 @@
+import 'package:base_app/pages/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,9 +37,9 @@ class FeaturedRecipesSection extends StatelessWidget {
             Text(
               "Featured Recipes",
               style: GoogleFonts.raleway(
-                fontSize: 22,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 195, 88, 17),
+                color: Login.softMaroon,
               ),
             ),
 
@@ -122,7 +123,7 @@ class RecipeImageCard extends StatelessWidget {
                 style: GoogleFonts.raleway(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 195, 88, 17),
+                  color: Login.softMaroon,
                 ),
               ),
             ),
