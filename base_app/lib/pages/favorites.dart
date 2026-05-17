@@ -8,6 +8,7 @@ import 'package:base_app/pages/history.dart';
 import 'package:base_app/pages/chat_box.dart';
 import 'package:base_app/pages/profile.dart';
 import 'package:base_app/pages/recipe_detail_page.dart';
+import 'package:base_app/pages/login.dart';
 
 import 'package:base_app/pages/grocery_list.dart';
 
@@ -19,6 +20,11 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color maroon = Color(0xFF670E10);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+  static const Color inputFill = Color.fromARGB(255, 247, 245, 241);
   Future<void> _removeFavorite(String recipeId) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -40,9 +46,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 218, 122),
+      backgroundColor:background,
       drawer: Drawer(
-        backgroundColor: Color.fromARGB(255, 243, 242, 240),
+        backgroundColor:inputFill,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -50,9 +56,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color.fromARGB(255, 245, 218, 122),
-                    Color.fromARGB(255, 226, 195, 110),
-                  ],
+          softMaroon,
+softMaroon,                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -89,7 +94,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ListTile(
               leading: const Icon(
                 Icons.home_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
+                color: softMaroon,
               ),
               title: Text(
                 'Home',
@@ -110,7 +115,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color: Color.fromARGB(255, 120, 69, 182),
+                color:maroon,
               ),
               title: Text(
                 'My Plates',
@@ -132,7 +137,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ListTile(
               leading: const Icon(
                 Icons.history_outlined,
-                color: Color.fromARGB(255, 130, 72, 183),
+                color: softMaroon,
               ),
               title: Text(
                 'History',
@@ -151,7 +156,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ListTile(
               leading: const Icon(
                 Icons.shopping_cart_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
+                color: softMaroon,
               ),
               title: Text(
                 'Grocery List',
@@ -174,7 +179,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ListTile(
               leading: const Icon(
                 Icons.person_outline,
-                color: Color.fromARGB(255, 97, 57, 163),
+                color: softMaroon,
               ),
               title: Text(
                 'My Profile',
@@ -216,15 +221,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
           "My Plates",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Color.fromARGB(255, 236, 110, 31),
+              color: softMaroon,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 245, 218, 122),
+        backgroundColor: sage,
         elevation: 0,
         iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 236, 110, 31),
+          color:softMaroon,
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -267,7 +272,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(
                   Icons.restaurant_menu,
-                  color: Color.fromARGB(255, 236, 110, 31),
+                  color: sage,
                 ),
                 title: Text(
                   recipe['recipe_title'] ?? 'Unnamed Recipe',
