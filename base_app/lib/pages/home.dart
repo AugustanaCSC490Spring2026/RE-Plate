@@ -36,6 +36,7 @@ class _HomeState extends State<Home> {
 
   List<Map<String, dynamic>> _foundRecipes = [];
   bool _isSearching = false;
+  bool _hasSearched = false;
 
   /// Adds a new ingredient to the pantry list if it's not empty and not already present
   void _addIngredient() {
@@ -81,6 +82,7 @@ class _HomeState extends State<Home> {
     setState(() {
       _pantryList.clear();
       _foundRecipes.clear();
+      _hasSearched = false;
     });
   }
 
@@ -219,6 +221,7 @@ class _HomeState extends State<Home> {
     setState(() {
       _isSearching = true;
       _foundRecipes = [];
+      _hasSearched = true;
     });
 
     try {
@@ -772,7 +775,25 @@ class _HomeState extends State<Home> {
                           },
                         ),
                         const SizedBox(height: 24),
+                      ] else if (_hasSearched &&
+                          _foundRecipes.isEmpty &&
+                          !_isSearching) ...[
+                        const SizedBox(height: 40),
+                        Center(
+                          child: Column(
+                            children: [
+                              Icon(Icons.no_meals, size: 48, color: Home.sage),
+                              SizedBox(height: 8),
+                              Text(
+                                "No recipes found. Try different ingredients\nor check your dietary preferences.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Home.softMaroon),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
+
                       FeaturedRecipesSection(
                         onRecipeTap: (recipe) => RecipeDetailPage.show(
                           context,
