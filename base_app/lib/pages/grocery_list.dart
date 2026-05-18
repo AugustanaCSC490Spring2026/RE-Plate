@@ -16,6 +16,10 @@ class GroceryListPage extends StatefulWidget {
 }
 
 class _GroceryListPageState extends State<GroceryListPage> {
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> _groceryItems = [];
   bool _isLoading = true;
@@ -26,7 +30,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
     _loadGroceryList();
   }
 
-  // Load items from Firestore when page opens
   Future<void> _loadGroceryList() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -50,7 +53,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
     });
   }
 
-  // Add a new item
   Future<void> _addItem() async {
     String input = _controller.text.trim();
     if (input.isEmpty) return;
@@ -58,7 +60,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    // Add to Firestore
     final docRef = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -69,14 +70,12 @@ class _GroceryListPageState extends State<GroceryListPage> {
           'added_at': FieldValue.serverTimestamp(),
         });
 
-    // Add to local state immediately so UI updates fast
     setState(() {
       _groceryItems.add({'id': docRef.id, 'name': input, 'checked': false});
       _controller.clear();
     });
   }
 
-  // Toggle checked/unchecked
   Future<void> _toggleItem(int index) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -95,7 +94,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
     });
   }
 
-  // Delete a single item
   Future<void> _deleteItem(int index) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -112,7 +110,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
     });
   }
 
-  // Clear all checked items
   Future<void> _clearChecked() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -141,19 +138,16 @@ class _GroceryListPageState extends State<GroceryListPage> {
     int checkedCount = _groceryItems.where((i) => i['checked']).length;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 245, 218, 122),
+      backgroundColor: background,
       drawer: Drawer(
-        backgroundColor: Color.fromARGB(255, 248, 247, 245),
+        backgroundColor: Colors.white,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 245, 218, 122),
-                    Color.fromARGB(255, 226, 195, 110),
-                  ],
+                  colors: [softMaroon, softMaroon],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -179,7 +173,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Color.fromARGB(255, 111, 87, 192),
+                      color: softMaroon,
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),
@@ -188,10 +182,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
               ),
             ),
             ListTile(
-              leading: const Icon(
-                Icons.home_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
-              ),
+              leading: const Icon(Icons.home_outlined, color: softMaroon),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -202,16 +193,14 @@ class _GroceryListPageState extends State<GroceryListPage> {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => Home(),
-                  ), // replace HomePage with your actual class name
+                  MaterialPageRoute(builder: (context) => Home()),
                 );
               },
             ),
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color: Color.fromARGB(255, 120, 69, 182),
+                color: softMaroon,
               ),
               title: Text(
                 'My Plates',
@@ -229,12 +218,8 @@ class _GroceryListPageState extends State<GroceryListPage> {
                 );
               },
             ),
-
             ListTile(
-              leading: const Icon(
-                Icons.history_outlined,
-                color: Color.fromARGB(255, 130, 72, 183),
-              ),
+              leading: const Icon(Icons.history_outlined, color: softMaroon),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -252,7 +237,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
             ListTile(
               leading: const Icon(
                 Icons.shopping_cart_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
+                color: softMaroon,
               ),
               title: Text(
                 'Grocery List',
@@ -260,7 +245,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -271,12 +255,8 @@ class _GroceryListPageState extends State<GroceryListPage> {
                 );
               },
             ),
-
             ListTile(
-              leading: const Icon(
-                Icons.person_outline,
-                color: Color.fromARGB(255, 97, 57, 163),
-              ),
+              leading: const Icon(Icons.person_outline, color: softMaroon),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -291,7 +271,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
                 );
               },
             ),
-
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
@@ -312,24 +291,20 @@ class _GroceryListPageState extends State<GroceryListPage> {
           ],
         ),
       ),
-
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 245, 218, 122),
+        backgroundColor: background,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 236, 110, 31),
-        ),
+        iconTheme: const IconThemeData(color: softMaroon),
         title: Text(
           'Grocery List',
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Color.fromARGB(255, 195, 88, 17),
+              color: softMaroon,
               fontWeight: FontWeight.bold,
-              fontSize: 24,
+              fontSize: 34,
             ),
           ),
         ),
-        // Show clear checked button only if something is checked
         actions: [
           if (checkedCount > 0)
             TextButton(
@@ -350,47 +325,36 @@ class _GroceryListPageState extends State<GroceryListPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Item count summary
               Text(
                 '${_groceryItems.length} items · $checkedCount checked',
                 style: GoogleFonts.raleway(
                   fontSize: 14,
-                  color: Colors.grey[600],
+                  color: softMaroon.withOpacity(0.7),
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Input field
               TextField(
                 controller: _controller,
                 onSubmitted: (_) => _addItem(),
                 decoration: InputDecoration(
                   hintText: 'Add item...',
                   suffixIcon: IconButton(
-                    icon: const Icon(
-                      Icons.add_circle,
-                      color: Color.fromARGB(255, 159, 77, 207),
-                    ),
+                    icon: const Icon(Icons.add_circle, color: sage),
                     onPressed: _addItem,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[100],
+                  fillColor: Colors.white.withOpacity(0.6),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // List of items
               Expanded(
                 child: _isLoading
                     ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Color.fromARGB(255, 205, 180, 91),
-                        ),
+                        child: CircularProgressIndicator(color: softMaroon),
                       )
                     : _groceryItems.isEmpty
                     ? Center(
@@ -398,7 +362,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
                           'Your grocery list is empty.\nAdd something above!',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.raleway(
-                            color: Colors.grey,
+                            color: softMaroon.withOpacity(0.5),
                             fontSize: 16,
                           ),
                         ),
@@ -410,7 +374,6 @@ class _GroceryListPageState extends State<GroceryListPage> {
                           final isChecked = item['checked'] as bool;
 
                           return Dismissible(
-                            // Swipe left to delete
                             key: Key(item['id']),
                             direction: DismissDirection.endToStart,
                             background: Container(
@@ -430,19 +393,14 @@ class _GroceryListPageState extends State<GroceryListPage> {
                               margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
                                 color: isChecked
-                                    ? Colors.grey[200]
-                                    : Colors.white,
+                                    ? background.withOpacity(0.5)
+                                    : Colors.white.withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: ListTile(
                                 leading: Checkbox(
                                   value: isChecked,
-                                  activeColor: const Color.fromARGB(
-                                    255,
-                                    159,
-                                    77,
-                                    207,
-                                  ),
+                                  activeColor: sage,
                                   onChanged: (_) => _toggleItem(index),
                                 ),
                                 title: Text(
@@ -454,8 +412,8 @@ class _GroceryListPageState extends State<GroceryListPage> {
                                         ? TextDecoration.lineThrough
                                         : null,
                                     color: isChecked
-                                        ? Colors.grey
-                                        : Colors.black87,
+                                        ? softMaroon.withOpacity(0.4)
+                                        : softMaroon,
                                   ),
                                 ),
                                 trailing: IconButton(

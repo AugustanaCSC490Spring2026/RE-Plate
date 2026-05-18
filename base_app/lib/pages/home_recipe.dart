@@ -37,7 +37,7 @@ class FeaturedRecipesSection extends StatelessWidget {
             Text(
               "Featured Recipes",
               style: GoogleFonts.raleway(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Login.softMaroon,
               ),

@@ -17,13 +17,9 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-
   static const Color background = Color.fromARGB(255, 222, 209, 182);
-  static const Color maroon = Color(0xFF670E10);
   static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
   static const Color sage = Color.fromARGB(255, 126, 153, 120);
-  static const Color inputFill = Color.fromARGB(255, 247, 245, 241);
-  static const Color inputBorder = Color(0xffEFE7DD);
 
   /// Clears the entire history for the current user
   Future<void> _clearHistory() async {
@@ -145,10 +141,7 @@ class _HistoryPageState extends State<HistoryPage> {
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    softMaroon,
-                    softMaroon
-                  ],
+                  colors: [softMaroon, softMaroon],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -174,7 +167,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Color.fromARGB(255, 103, 17, 195),
+                      color: softMaroon,
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),
@@ -183,10 +176,7 @@ class _HistoryPageState extends State<HistoryPage> {
               ),
             ),
             ListTile(
-              leading: const Icon(
-                Icons.home_outlined,
-                color:softMaroon,
-              ),
+              leading: const Icon(Icons.home_outlined, color: softMaroon),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -226,10 +216,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
 
             ListTile(
-              leading: const Icon(
-                Icons.history_outlined,
-                color: softMaroon,
-              ),
+              leading: const Icon(Icons.history_outlined, color: softMaroon),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -268,10 +255,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
 
             ListTile(
-              leading: const Icon(
-                Icons.person_outline,
-                color: softMaroon,
-              ),
+              leading: const Icon(Icons.person_outline, color: softMaroon),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -312,28 +296,22 @@ class _HistoryPageState extends State<HistoryPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'lib/assets/images/replateLogo1.png',
-              height: 36,
-              fit: BoxFit.contain,
-            ),
             const SizedBox(width: 4),
             Text(
               "History",
               style: GoogleFonts.raleway(
                 textStyle: const TextStyle(
                   color: softMaroon,
+                  fontSize: 34,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor:background,
+        backgroundColor: background,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: softMaroon,
-        ),
+        iconTheme: const IconThemeData(color: softMaroon),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
@@ -384,10 +362,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.history,
-                      color: sage,
-                    ),
+                    leading: const Icon(Icons.history, color: softMaroon),
                     title: Text(
                       recipe['recipe_title'] ?? 'Unnamed Recipe',
                       style: GoogleFonts.raleway(
@@ -399,7 +374,8 @@ class _HistoryPageState extends State<HistoryPage> {
                       _formatTimestamp(timestamp),
                       style: GoogleFonts.raleway(
                         fontSize: 12,
-                        color: Colors.grey,
+                        fontWeight: FontWeight.w600,
+                        color: sage,
                       ),
                     ),
                     trailing: Row(
