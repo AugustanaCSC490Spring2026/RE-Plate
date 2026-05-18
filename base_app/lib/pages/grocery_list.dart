@@ -292,6 +292,19 @@ class _GroceryListPageState extends State<GroceryListPage> {
         ),
       ),
       appBar: AppBar(
+        leadingWidth: 120, // give it more horizontal space
+          leading: Builder(
+          builder: (context) => GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: Transform.translate(
+              offset: const Offset(-22, 0), 
+              child: Image.asset(
+                'lib/assets/images/replateLogo1.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
         backgroundColor: background,
         elevation: 0,
         iconTheme: const IconThemeData(color: softMaroon),

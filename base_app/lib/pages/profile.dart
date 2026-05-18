@@ -243,6 +243,19 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       appBar: AppBar(
+        leadingWidth: 120, // give it more horizontal space
+          leading: Builder(
+          builder: (context) => GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: Transform.translate(
+              offset: const Offset(-22, 0), 
+              child: Image.asset(
+                'lib/assets/images/replateLogo1.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
         title: Text(
           "My Profile",
           style: GoogleFonts.raleway(

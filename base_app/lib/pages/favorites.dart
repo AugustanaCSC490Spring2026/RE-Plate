@@ -206,6 +206,19 @@ class _FavoritesPageState extends State<FavoritesPage> {
         ),
       ),
       appBar: AppBar(
+        leadingWidth: 120, // give it more horizontal space
+          leading: Builder(
+          builder: (context) => GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: Transform.translate(
+              offset: const Offset(-22, 0), 
+              child: Image.asset(
+                'lib/assets/images/replateLogo1.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
         title: Text(
           "My Plates",
           style: GoogleFonts.raleway(
