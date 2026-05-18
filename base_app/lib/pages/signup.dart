@@ -27,73 +27,74 @@ class Signup extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _signin(context),
       appBar: AppBar(
-        backgroundColor:background,
+        backgroundColor: background,
         elevation: 0,
         toolbarHeight: 80,
       ),
       body: SafeArea(
-  child: Center(
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 520),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-              const SizedBox(height: 12),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 12),
 
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'Create Your RE-Plate Account',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                          color: softMaroon,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 40,
-                          letterSpacing: 0.2,
+                  Center(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'lib/assets/images/replateLogo1.png',
+                          height: 200,
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      /*  */
-                      'Cook smarter with what you already have!',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                          color: softMaroon,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 17,
+                        Text(
+                          'Create Your RE-Plate Account',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.raleway(
+                            textStyle: const TextStyle(
+                              color: softMaroon,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 40,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        Text(
+                          /*  */
+                          'Cook smarter with what you already have!',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.raleway(
+                            textStyle: const TextStyle(
+                              color: softMaroon,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 48),
+                  /*  */
+                  _username(),
+                  const SizedBox(height: 24),
+                  _emailAddress(),
+                  const SizedBox(height: 24),
+                  _password(context),
+                  const SizedBox(height: 36),
+                  _signup(context),
+                  const SizedBox(height: 16),
+                ],
               ),
-              const SizedBox(height: 48),
-              /*  */
-              _username(),
-              const SizedBox(height: 24),
-              _emailAddress(),
-              const SizedBox(height: 24),
-              _password(context),
-              const SizedBox(height: 36),
-                            _signup(context),
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
         ),
       ),
-    ),
-
-      ),
- );
-    
-}
-
+    );
+  }
 
   Widget _username() {
     return Column(
@@ -121,10 +122,7 @@ class Signup extends StatelessWidget {
             ),
           ),
           decoration: InputDecoration(
-            prefixIcon:  Icon(
-              Icons.person_outline_rounded,
-              color: softMaroon,
-            ),
+            prefixIcon: Icon(Icons.person_outline_rounded, color: softMaroon),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 20,
               horizontal: 16,
@@ -177,10 +175,7 @@ class Signup extends StatelessWidget {
             ),
           ),
           decoration: InputDecoration(
-            prefixIcon:  Icon(
-              Icons.email_outlined,
-              color: softMaroon,
-            ),
+            prefixIcon: Icon(Icons.email_outlined, color: softMaroon),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 20,
               horizontal: 16,
@@ -196,7 +191,7 @@ class Signup extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: const BorderSide(
-                color:  Color.fromARGB(255, 236, 110, 31),
+                color: Color.fromARGB(255, 236, 110, 31),
                 width: 1.2,
               ),
             ),
@@ -233,10 +228,7 @@ class Signup extends StatelessWidget {
             ),
           ),
           decoration: InputDecoration(
-            prefixIcon:  Icon(
-              Icons.lock_outline_rounded,
-              color:softMaroon,
-            ),
+            prefixIcon: Icon(Icons.lock_outline_rounded, color: softMaroon),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 20,
               horizontal: 16,
@@ -252,7 +244,7 @@ class Signup extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: const BorderSide(
-                color:  Color.fromARGB(255, 236, 110, 31),
+                color: Color.fromARGB(255, 236, 110, 31),
                 width: 1.2,
               ),
             ),
@@ -286,7 +278,6 @@ class Signup extends StatelessWidget {
           fontSize: 17,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.3,
-      
         ),
       ),
     );
@@ -304,7 +295,7 @@ class Signup extends StatelessWidget {
               style: TextStyle(
                 color: Color(0xff6A6A6A),
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
+                fontSize: 18,
               ),
             ),
             TextSpan(
@@ -312,7 +303,7 @@ class Signup extends StatelessWidget {
               style: const TextStyle(
                 color: maroon,
                 fontWeight: FontWeight.w700,
-                fontSize: 16,
+                fontSize: 18,
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
