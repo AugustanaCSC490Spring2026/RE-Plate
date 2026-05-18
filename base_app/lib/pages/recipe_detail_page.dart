@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'package:base_app/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 // transferred over the ShowRecipeDetail method from all the other pages to avoid WET code
 class RecipeDetailPage extends StatefulWidget {
-  @override
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+
   State<RecipeDetailPage> createState() => _RecipeDetailPageState();
   final Map<String, dynamic> recipe;
   final Future<void> Function(Map<String, dynamic>)? onLogHistory;
@@ -142,7 +147,7 @@ class RecipeDetailPage extends StatefulWidget {
                     style: GoogleFonts.raleway(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 154, 67, 208),
+                      color: softMaroon,
                     ),
                   ),
                 ),
@@ -163,11 +168,7 @@ class RecipeDetailPage extends StatefulWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
-                      Icons.fiber_manual_record,
-                      size: 8,
-                      color: Colors.green,
-                    ),
+                    const Icon(Icons.fiber_manual_record, size: 8, color: sage),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -196,7 +197,7 @@ class RecipeDetailPage extends StatefulWidget {
                   children: [
                     CircleAvatar(
                       radius: 12,
-                      backgroundColor: const Color.fromARGB(255, 195, 88, 17),
+                      backgroundColor: softMaroon,
                       child: Text(
                         '${entry.key + 1}',
                         style: const TextStyle(
@@ -222,7 +223,6 @@ class RecipeDetailPage extends StatefulWidget {
     );
   }
 }
-
 
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   late Map<String, bool> _have;
@@ -339,21 +339,28 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       if (mounted) setState(() => _isSearching = false);
     }
   }
+
   Future<void> _addMissingToGroceryList() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final missing = _have.entries.where((e) => !e.value).map((e) => e.key).toList();
+    final missing = _have.entries
+        .where((e) => !e.value)
+        .map((e) => e.key)
+        .toList();
     if (missing.isEmpty) return;
 
     setState(() => _isAddingToGrocery = true);
     try {
       final groceryRef = FirebaseFirestore.instance
-          .collection('users').doc(user.uid).collection('groceryList');
+          .collection('users')
+          .doc(user.uid)
+          .collection('groceryList');
 
       final existing = await groceryRef.get();
       final existingNames = existing.docs
-          .map((d) => (d['name'] as String).toLowerCase().trim()).toSet();
+          .map((d) => (d['name'] as String).toLowerCase().trim())
+          .toSet();
 
       int added = 0;
       for (final ingredient in missing) {
@@ -371,23 +378,28 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       final msg = added == 0
           ? 'All missing items already in grocery list.'
           : skipped > 0
-              ? '$added added ($skipped already in list).'
-              : '$added item${added > 1 ? 's' : ''} added to grocery list!';
+          ? '$added added ($skipped already in list).'
+          : '$added item${added > 1 ? 's' : ''} added to grocery list!';
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(msg, style: GoogleFonts.raleway()),
-          backgroundColor: const Color.fromARGB(255, 159, 77, 207),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(msg, style: GoogleFonts.raleway()),
+            backgroundColor: Home.sage,
+            behavior: SnackBarBehavior.floating,
+
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _isAddingToGrocery = false);
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     final ingredients = RecipeDetailPage._ensureList(
       widget.recipe['ingredients'],
@@ -428,7 +440,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios,
-                    color: Color.fromARGB(255, 195, 88, 17),
+                    color: RecipeDetailPage.softMaroon,
                   ),
                   onPressed: () => Navigator.pop(context),
                   padding: EdgeInsets.zero,
@@ -441,7 +453,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     style: GoogleFonts.raleway(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 154, 67, 208),
+                      color: RecipeDetailPage.softMaroon,
                     ),
                   ),
                 ),
@@ -460,11 +472,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
             if (cleanIngredients.isNotEmpty) ...[
               Text(
-                "Tap an ingredient to cross off what you don't have.",
-                style: GoogleFonts.raleway(
-                  fontSize: 12,
-                  color: Colors.grey[500],
-                ),
+                "Tap to uncheck ingredients you don't have.",
+                style: GoogleFonts.raleway(fontSize: 12, color: Colors.black),
               ),
               const SizedBox(height: 8),
               ...List.generate(ingredients.length, (i) {
@@ -571,7 +580,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 195, 88, 17),
+                      backgroundColor: RecipeDetailPage.softMaroon,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -583,7 +592,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _isAddingToGrocery ? null : _addMissingToGroceryList,
+                    onPressed: _isAddingToGrocery
+                        ? null
+                        : _addMissingToGroceryList,
                     icon: _isAddingToGrocery
                         ? const SizedBox(
                             width: 16,
@@ -608,7 +619,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 159, 77, 207),
+                      backgroundColor: Home.sage,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -685,6 +696,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     );
   }
 }
+
 // ---------------------------------------------------------------------------
 // Results sheet — shows recipe titles that matched the ingredient intersection
 // ---------------------------------------------------------------------------
@@ -732,7 +744,7 @@ class _RecipeResultsSheet extends StatelessWidget {
                 IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios,
-                    color: Color.fromARGB(255, 195, 88, 17),
+                    color: RecipeDetailPage.softMaroon,
                   ),
                   onPressed: () =>
                       Navigator.of(context).popUntil((route) => route.isFirst),
@@ -745,7 +757,7 @@ class _RecipeResultsSheet extends StatelessWidget {
                   style: GoogleFonts.raleway(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 154, 67, 208),
+                    color: RecipeDetailPage.softMaroon,
                   ),
                 ),
               ],
@@ -791,7 +803,7 @@ class _RecipeResultsSheet extends StatelessWidget {
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(vertical: 4),
                       leading: const CircleAvatar(
-                        backgroundColor: Color.fromARGB(255, 195, 88, 17),
+                        backgroundColor: Home.sage,
                         radius: 14,
                         child: Icon(
                           Icons.restaurant_menu,
