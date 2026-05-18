@@ -46,18 +46,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }
 
     return Scaffold(
-      backgroundColor:background,
+      backgroundColor: background,
       drawer: Drawer(
-        backgroundColor:inputFill,
+        backgroundColor: inputFill,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-          softMaroon,
-softMaroon,                  ],
+                  colors: [softMaroon, softMaroon],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -83,7 +81,7 @@ softMaroon,                  ],
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Color.fromARGB(255, 111, 87, 192),
+                      color: softMaroon,
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),
@@ -92,10 +90,7 @@ softMaroon,                  ],
               ),
             ),
             ListTile(
-              leading: const Icon(
-                Icons.home_outlined,
-                color: softMaroon,
-              ),
+              leading: const Icon(Icons.home_outlined, color: softMaroon),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -115,7 +110,7 @@ softMaroon,                  ],
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color:maroon,
+                color: maroon,
               ),
               title: Text(
                 'My Plates',
@@ -135,10 +130,7 @@ softMaroon,                  ],
             ),
 
             ListTile(
-              leading: const Icon(
-                Icons.history_outlined,
-                color: softMaroon,
-              ),
+              leading: const Icon(Icons.history_outlined, color: softMaroon),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -177,10 +169,7 @@ softMaroon,                  ],
             ),
 
             ListTile(
-              leading: const Icon(
-                Icons.person_outline,
-                color: softMaroon,
-              ),
+              leading: const Icon(Icons.person_outline, color: softMaroon),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -223,14 +212,13 @@ softMaroon,                  ],
             textStyle: const TextStyle(
               color: softMaroon,
               fontWeight: FontWeight.bold,
+              fontSize: 36,
             ),
           ),
         ),
-        backgroundColor: sage,
+        backgroundColor: background,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color:softMaroon,
-        ),
+        iconTheme: const IconThemeData(color: softMaroon),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -270,10 +258,7 @@ softMaroon,                  ],
 
               return ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(
-                  Icons.restaurant_menu,
-                  color: sage,
-                ),
+                leading: const Icon(Icons.restaurant_menu, color: sage),
                 title: Text(
                   recipe['recipe_title'] ?? 'Unnamed Recipe',
                   style: GoogleFonts.raleway(

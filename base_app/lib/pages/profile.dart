@@ -16,6 +16,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  static const Color background = Color.fromARGB(255, 222, 209, 182);
+  static const Color softMaroon = Color.fromARGB(255, 117, 52, 61);
+  static const Color sage = Color.fromARGB(255, 126, 153, 120);
+
   final List<String> _allRestrictions = [
     'Vegetarian',
     'Vegan',
@@ -85,19 +89,16 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 218, 122),
+      backgroundColor: background,
       drawer: Drawer(
-        backgroundColor: Color.fromARGB(255, 248, 247, 245),
+        backgroundColor: Colors.white,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 245, 218, 122),
-                    Color.fromARGB(255, 226, 195, 110),
-                  ],
+                  colors: [softMaroon, softMaroon],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -123,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
-                      color: Color.fromARGB(255, 111, 87, 192),
+                      color: softMaroon,
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
                     ),
@@ -132,10 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             ListTile(
-              leading: const Icon(
-                Icons.home_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
-              ),
+              leading: const Icon(Icons.home_outlined, color: softMaroon),
               title: Text(
                 'Home',
                 style: GoogleFonts.raleway(
@@ -146,16 +144,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => Home(),
-                  ), // replace HomePage with your actual class name
+                  MaterialPageRoute(builder: (context) => Home()),
                 );
               },
             ),
             ListTile(
               leading: const Icon(
                 Icons.favorite_outline_rounded,
-                color: Color.fromARGB(255, 120, 69, 182),
+                color: softMaroon,
               ),
               title: Text(
                 'My Plates',
@@ -173,12 +169,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             ),
-
             ListTile(
-              leading: const Icon(
-                Icons.history_outlined,
-                color: Color.fromARGB(255, 130, 72, 183),
-              ),
+              leading: const Icon(Icons.history_outlined, color: softMaroon),
               title: Text(
                 'History',
                 style: GoogleFonts.raleway(
@@ -196,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ListTile(
               leading: const Icon(
                 Icons.shopping_cart_outlined,
-                color: Color.fromARGB(255, 109, 83, 194),
+                color: softMaroon,
               ),
               title: Text(
                 'Grocery List',
@@ -204,7 +196,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -215,12 +206,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             ),
-
             ListTile(
-              leading: const Icon(
-                Icons.person_outline,
-                color: Color.fromARGB(255, 97, 57, 163),
-              ),
+              leading: const Icon(Icons.person_outline, color: softMaroon),
               title: Text(
                 'My Profile',
                 style: GoogleFonts.raleway(
@@ -235,7 +222,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             ),
-
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
@@ -261,46 +247,35 @@ class _ProfilePageState extends State<ProfilePage> {
           "My Profile",
           style: GoogleFonts.raleway(
             textStyle: const TextStyle(
-              color: Color.fromARGB(255, 236, 110, 31),
+              color: softMaroon,
               fontWeight: FontWeight.bold,
+              fontSize: 34,
             ),
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 245, 218, 122),
+        backgroundColor: background,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 236, 110, 31),
-        ),
+        iconTheme: const IconThemeData(color: softMaroon),
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: Color.fromARGB(255, 236, 110, 31),
-              ),
-            )
+          ? const Center(child: CircularProgressIndicator(color: softMaroon))
           : Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // User info header
                   Row(
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          237,
-                          242,
-                          237,
-                        ),
+                        backgroundColor: Colors.white,
                         child: Text(
                           user?.displayName?.substring(0, 1).toUpperCase() ??
                               'U',
                           style: GoogleFonts.raleway(
-                            fontSize: 28,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 82, 40, 173),
+                            color: softMaroon,
                           ),
                         ),
                       ),
@@ -311,15 +286,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           Text(
                             user?.displayName ?? 'Chef',
                             style: GoogleFonts.raleway(
-                              fontSize: 18,
+                              fontSize: 28,
                               fontWeight: FontWeight.bold,
+                              color: softMaroon,
                             ),
                           ),
                           Text(
                             user?.email ?? '',
                             style: GoogleFonts.raleway(
-                              fontSize: 13,
-                              color: Colors.grey,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: sage.withOpacity(0.6),
                             ),
                           ),
                         ],
@@ -332,22 +309,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text(
                     'Dietary Restrictions',
                     style: GoogleFonts.raleway(
-                      fontSize: 20,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 236, 110, 31),
+                      color: softMaroon,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Select all that apply to you',
                     style: GoogleFonts.raleway(
-                      fontSize: 13,
-                      color: Colors.grey,
+                      fontSize: 18,
+                      color: softMaroon.withOpacity(0.6),
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  // Restriction chips
                   Expanded(
                     child: SingleChildScrollView(
                       child: Wrap(
@@ -361,9 +337,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: Text(
                               restriction,
                               style: GoogleFonts.raleway(
-                                color: isSelected
-                                    ? Colors.white
-                                    : Color.fromARGB(255, 236, 110, 31),
+                                color: isSelected ? Colors.white : softMaroon,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -377,14 +351,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 }
                               });
                             },
-                            backgroundColor: Color.fromARGB(255, 245, 218, 122),
-                            selectedColor: Color.fromARGB(255, 236, 110, 31),
+                            backgroundColor: background,
+                            selectedColor: sage,
                             checkmarkColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(
-                                color: Color.fromARGB(255, 236, 110, 31),
-                              ),
+                              side: BorderSide(color: softMaroon),
                             ),
                           );
                         }).toList(),
@@ -394,14 +366,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   const SizedBox(height: 16),
 
-                  // Save button
                   SizedBox(
-                    width: double.infinity,
+                    width: 200,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _isSaving ? null : _saveRestrictions,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 236, 110, 31),
+                        backgroundColor: softMaroon,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
